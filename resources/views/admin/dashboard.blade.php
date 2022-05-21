@@ -33,7 +33,7 @@
             <div class="inner">
                 <h3>{{ $produk }}</h3>
 
-                <p>Total Produk</p>
+                <p>Total Sparepart</p>
             </div>
             <div class="icon">
                 <i class="fa fa-cubes"></i>
@@ -48,7 +48,7 @@
             <div class="inner">
                 <h3>{{ $member }}</h3>
 
-                <p>Total Customer</p>
+                <p>Total Aset</p>
             </div>
             <div class="icon">
                 <i class="fa fa-id-card"></i>
