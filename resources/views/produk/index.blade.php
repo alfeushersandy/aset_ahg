@@ -68,7 +68,7 @@
                 {data: 'kode_produk'},
                 {data: 'nama_produk'},
                 {data: 'nama_kategori'},
-                {data: 'merk'},
+                {data: 'merek'},
                 {data: 'harga_beli'},
                 {data: 'harga_jual'},
                 {data: 'diskon'},

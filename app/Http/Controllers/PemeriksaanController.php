@@ -15,16 +15,18 @@ class PemeriksaanController extends Controller
             $permintaan = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'Submited')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->where('nama', auth()->user()->name)
                         ->get();
         }else{
             $permintaan = DB::table('permintaan')
             ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
             ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+            ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
             ->where('status', 'Submited')
-            ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+            ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
             ->get();
         }
         $count = $permintaan->count();
@@ -37,8 +39,9 @@ class PemeriksaanController extends Controller
         $pemeriksaan = DB::table('permintaan')
                 ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                 ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                 ->where('status', 'Check by Mechanic')
-                ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                 ->get();
 
         return datatables()
@@ -49,15 +52,7 @@ class PemeriksaanController extends Controller
                     <input type="checkbox" name="id_produk[]" value="'. $pemeriksaan->id .'">
                 ';
             })
-            ->addColumn('aksi', function ($pemeriksaan) {
-                return '
-                <div class="btn-group">
-                    <button type="button" onclick="editForm(`'. route('pemeriksaan.update', $pemeriksaan->id) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                    <button type="button" onclick="deleteData(`'. route('pemeriksaan.destroy', $pemeriksaan->id) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-                </div>
-                ';
-            })
-            ->rawColumns(['aksi', 'select_all'])
+            ->rawColumns(['select_all'])
             ->make(true);
     }
 

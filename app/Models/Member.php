@@ -17,4 +17,14 @@ class Member extends Model
     public function permintaan() {
         return $this->hasMany(Permintaan::class, 'kode_customer', 'kode_member');
     }
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id_lokasi');
+    }
 }

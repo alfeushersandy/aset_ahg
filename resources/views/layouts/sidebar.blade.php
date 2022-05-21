@@ -25,6 +25,11 @@
             @if (auth()->user()->level == 1)
             <li class="header">MASTER</li>
             <li>
+                <a href="{{ route('departemen.index') }}">
+                    <i class="fa fa-building"></i> <span>Departemen</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('kategori.index') }}">
                     <i class="fa fa-cube"></i> <span>Kategori</span>
                 </a>

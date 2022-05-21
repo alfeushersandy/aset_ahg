@@ -44,8 +44,8 @@
                             <th width="5%">No</th>
                             <th>Tanggal</th>
                             <th>Kode Permintaan</th>
-                            <th>Kode Kendaraan</th>
-                            <th>Unit</th>
+                            <th>Kode Aset</th>
+                            <th>Unit/Lokasi</th>
                             <th>User</th>
                             <th>Keluhan</th>
                             <th>Mekanik</th>
@@ -81,7 +81,7 @@
                 {data: 'tanggal'},
                 {data: 'kode_permintaan'},
                 {data: 'kode_kabin'},
-                {data: 'unit'},
+                {data: 'nama_lokasi'},
                 {data: 'user'},
                 {data: 'Keluhan'},
                 {data: 'nama_petugas'},
@@ -118,7 +118,7 @@
 
     function addForm(url) {
         $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Tambah Produk');
+        $('#modal-form .modal-title').text('Tambah Permintaan');
 
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);

@@ -12,4 +12,9 @@ class Lokasi extends Model
     protected $table = 'table_lokasi';
     protected $primaryKey = 'id_lokasi';
     protected $guarded = [];
+
+    public function member()
+    {
+        return $this->hasMany(Member::class, 'id_lokasi', 'id_lokasi');
+    }
 }

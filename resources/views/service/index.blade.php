@@ -41,8 +41,8 @@
                         <th>Tanggal</th>
                         <th>Kode Permintaan</th>
                         <th>Kode Kendaraan</th>
-                        <th>Unit</th>
-                        <th>User</th>
+                        <th>Unit / Lokasi</th>
+                        <th>User / Operator</th>
                         <th>Keluhan</th>
                         <th>Mekanik</th>
                         <th>Status</th>
@@ -80,7 +80,7 @@
                 {data: 'tanggal'},
                 {data: 'kode_permintaan'},
                 {data: 'kode_kabin'},
-                {data: 'unit'},
+                {data: 'nama_lokasi'},
                 {data: 'user'},
                 {data: 'Keluhan'},
                 {data: 'nama_petugas'},

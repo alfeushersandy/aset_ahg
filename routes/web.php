@@ -23,6 +23,7 @@ use App\Http\Controllers\{
     LokasiController,
     BarangController,
     PermintaandetailController,
+    DepartemenController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::group(['middleware' => 'level:1'], function () {
+        Route::get('/departemen/data', [DepartemenController::class, 'data'])->name('departemen.data');
+        Route::resource('/departemen', DepartemenController::class);
+
         Route::get('/kategori/data', [KategoriController::class, 'data'])->name('kategori.data');
         Route::resource('/kategori', KategoriController::class);
 

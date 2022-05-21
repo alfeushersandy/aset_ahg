@@ -20,29 +20,33 @@ class ServiceController extends Controller
             $permintaan = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'Check by Mechanic')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->where('nama', auth()->user()->name)
                         ->get();
             $sparepart = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'On Progress')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->where('nama', auth()->user()->name)
                         ->get();
         }else{
             $permintaan = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'Check by Mechanic')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->get();
             $sparepart = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'On Progress')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->get();
         }
         
@@ -55,8 +59,9 @@ class ServiceController extends Controller
         $service = DB::table('permintaan')
                 ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                 ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                 ->where('status', 'On Progress')
-                ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                 ->get();
 
         return datatables()
@@ -105,16 +110,18 @@ class ServiceController extends Controller
             $permintaan = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'Selesai')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->where('nama', auth()->user()->name)
                         ->get();           
         }else{
             $permintaan = DB::table('permintaan')
                         ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                         ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                        ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                         ->where('status', 'Selesai')
-                        ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                        ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                         ->get();
         }
         

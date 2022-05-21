@@ -19,10 +19,10 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="kode_customer" class="col-lg-2 col-lg-offset-1 control-label">kode kendaraan</label>
+                        <label for="kode_customer" class="col-lg-2 col-lg-offset-1 control-label">Kode Aset</label>
                         <div class="col-lg-6">
                             <select name="kode_customer" id="kode_customer" class="form-control" required>
-                                <option value="">Pilih kendaraan</option>
+                                <option value="">Pilih Aset</option>
                                 @foreach ($kendaraan as $key => $item)
                                 <option value="{{ $key }}">{{ $item }}</option>
                                 @endforeach
@@ -31,9 +31,21 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="unit" class="col-lg-2 col-lg-offset-1 control-label">Unit</label>
+                        <label for="id_lokasi" class="col-lg-2 col-lg-offset-1 control-label">Unit / Lokasi</label>
                         <div class="col-lg-6">
-                            <input type="text" name="unit" id="unit" class="form-control datepicker" required autofocus
+                            <select name="id_lokasi" id="id_lokasi" class="form-control" required>
+                                <option value="">Pilih Unit/Lokasi</option>
+                                @foreach ($lokasi as $key => $item)
+                                <option value="{{ $key }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="user" class="col-lg-2 col-lg-offset-1 control-label">User</label>
+                        <div class="col-lg-6">
+                        <input type="text" name="user" id="user" class="form-control datepicker"
                                 style="border-radius: 0 !important;">
                             <span class="help-block with-errors"></span>
                         </div>

@@ -34,7 +34,8 @@
                         <th>Tanggal</th>
                         <th>Kode Permintaan</th>
                         <th>Kode Kendaraan</th>
-                        <th>User</th>
+                        <th>Unit / Lokasi</th>
+                        <th>User / Operator</th>
                         <th>Keluhan</th>
                         <th>Mekanik</th>
                         <th>Status</th>
@@ -47,7 +48,8 @@
                                 <td>{{ $item->tanggal }}</td>
                                 <td>{{ $item->kode_permintaan }}</td>
                                 <td>{{ $item->kode_kabin }}</td>
-                                <td>{{ $item->kode_kabin }}</td>
+                                <td>{{ $item->nama_lokasi }}</td>
+                                <td>{{ $item->user }}</td>
                                 <td>{{ $item->Keluhan }}</td>
                                 <td>{{ $item->nama_petugas }}</td>
                                 <td>{{ $item->status }}</td>

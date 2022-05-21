@@ -54,8 +54,8 @@
     $(function () {
         table = $('.table').DataTable({
             responsive: true,
-            processing: true,
-            serverSide: true,
+            processing: false,
+            serverSide: false,
             autoWidth: false,
             ajax: {
                 url: '{{ route('barang.data') }}',

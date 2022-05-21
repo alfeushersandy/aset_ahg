@@ -38,19 +38,15 @@
             <div class="box-body table-responsive">
                 <table class="table table-stiped table-bordered table-pembelian">
                     <thead>
-                        <th width="5%">
-                            <input type="checkbox" name="select_all" id="select_all">
-                        </th>
                         <th width="5%">No</th>
                         <th>Tanggal</th>
                         <th>Kode Permintaan</th>
                         <th>Kode Kendaraan</th>
-                        <th>Unit</th>
-                        <th>User</th>
+                        <th>Unit / Lokasi</th>
+                        <th>User / Operator</th>
                         <th>Keluhan</th>
                         <th>Mekanik</th>
                         <th>Status</th>
-                        <th width="15%"><i class="fa fa-cog"></i></th>
                     </thead>
                 </table>
             </div>
@@ -76,17 +72,15 @@
                 url: '{{ route('pemeriksaan.data') }}',
             },
             columns: [
-                {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'tanggal'},
                 {data: 'kode_permintaan'},
                 {data: 'kode_kabin'},
-                {data: 'unit'},
+                {data: 'nama_lokasi'},
                 {data: 'user'},
                 {data: 'Keluhan'},
                 {data: 'nama_petugas'},
                 {data: 'status'},
-                {data: 'aksi', searchable: false, sortable: false},
             ]
         });
 

@@ -18,7 +18,7 @@ class BarangController extends Controller
     public function data()
     {
         $produk = Barang::with('kategori')->get();
-
+     
         return datatables()
             ->of($produk)
             ->addIndexColumn()

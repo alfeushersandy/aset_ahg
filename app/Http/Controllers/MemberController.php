@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\Kategori;
 use App\Models\Setting;
+use App\Models\Lokasi;
 use Illuminate\Http\Request;
 use PDF;
 
@@ -23,7 +24,7 @@ class MemberController extends Controller
 
     public function data()
     {
-        $member = Member::orderBy('id')->get();
+        $member = Member::with('kategori', 'lokasi')->orderBy('id')->get();
 
         return datatables()
             ->of($member)
@@ -35,6 +36,12 @@ class MemberController extends Controller
             })
             ->addColumn('kode_member', function ($member) {
                 return '<span class="label label-success">'. $member->kode_member .'</span>';
+            })
+            ->addColumn('nama_kategori', function ($member){
+                return $member->kategori->nama_kategori;
+            })
+            ->addColumn('nama_lokasi', function ($member){
+                return $member->lokasi->nama_lokasi;
             })
             ->addColumn('aksi', function ($member) {
                 return '
@@ -74,8 +81,7 @@ class MemberController extends Controller
         $member->kode_kabin = $request->nama;
         $member->nopol = $request->no_pol;
         $member->user = $request->user;
-        $member->telepon = $request->telepon;
-        $member->alamat = $request->alamat;
+        $member->lokasi = $request->lokasi;
         $member->save();
 
         return response()->json('Data berhasil disimpan', 200);

@@ -7,6 +7,7 @@ use App\Models\Permintaan;
 use App\Models\Permintaandetail;
 use App\Models\Barang;
 use App\Models\Setting;
+use App\Models\Lokasi;
 use Illuminate\Support\Facades\DB;
 use PDF;
 use Illuminate\Http\Request;
@@ -15,9 +16,10 @@ class PermintaanController extends Controller
 {
     public function index()
     {
+        $lokasi = Lokasi::all()->pluck('nama_lokasi', 'id_lokasi');
         $kendaraan = Member::all()->pluck('kode_kabin', 'kode_member');
-        $mekanik = Petugas::all()->pluck('nama_petugas', 'id_petugas');
-        return view('permintaan.index', compact('kendaraan', 'mekanik'));
+        $mekanik = Petugas::where('kategori_tugas', 'Mekanik')->pluck('nama_petugas', 'id_petugas');
+        return view('permintaan.index', compact('kendaraan', 'mekanik', 'lokasi'));
     }
 
     public function data()
@@ -25,8 +27,9 @@ class PermintaanController extends Controller
         $permintaan = DB::table('permintaan')
                 ->leftJoin('member','member.kode_member','=','permintaan.kode_customer')
                 ->leftJoin('petugas','petugas.id_petugas','=','permintaan.id_mekanik')
+                ->leftJoin('table_lokasi', 'table_lokasi.id_lokasi', '=', 'permintaan.id_lokasi')
                 ->orderBy('kode_permintaan', 'desc')
-                ->select('permintaan.*', 'member.kode_kabin', 'member.user', 'petugas.nama_petugas')
+                ->select('permintaan.*', 'member.kode_kabin', 'petugas.nama_petugas', 'nama_lokasi')
                 ->get();
 
                 return datatables()
@@ -61,15 +64,14 @@ class PermintaanController extends Controller
         $permintaan->tanggal = $request->tanggal;
         $permintaan->kode_permintaan = 'PM'.tambah_nol_didepan($kode_permintaan, 5);
         $permintaan->kode_customer = $request->kode_customer;
-        $permintaan->unit = $request->unit;
+        $permintaan->id_lokasi = $request->id_lokasi;
+        $permintaan->user = $request->user;
         $permintaan->Keluhan = $request->Keluhan;
         $permintaan->total_item = 0;
         $permintaan->total_harga = 0;
         $permintaan->id_mekanik = $request->id_mekanik;
         $permintaan->status = 'Submited';
         $permintaan->save();
-
-        send_notification_FCM();
         return response()->json('Data berhasil disimpan', 200);
     }
 

@@ -27,8 +27,11 @@
                             </th>
                             <th width="5%">No</th>
                             <th>Kode</th>
+                            <th>Kategori</th>
                             <th>Kode Asset</th>
                             <th>No Polisi/No Seri</th>
+                            <th>User / Operator</th>
+                            <th>Lokasi</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -58,8 +61,11 @@
                 {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'kode_member'},
+                {data: 'nama_kategori'},
                 {data: 'kode_kabin'},
                 {data: 'nopol'},
+                {data: 'user'},
+                {data: 'nama_lokasi'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });
