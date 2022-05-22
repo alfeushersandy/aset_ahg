@@ -11,13 +11,6 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="nama" class="col-lg-2 col-lg-offset-1 control-label">Kode kendaraan</label>
-                        <div class="col-lg-6">
-                            <input type="text" name="nama" id="nama" class="form-control" required autofocus>
-                            <span class="help-block with-errors"></span>
-                        </div>
-                    </div>
                     <div class="form-group row-kategori">
                         <label for="id_kategori" class="col-lg-2 col-lg-offset-1 control-label">Kategori</label>
                         <div class="col-lg-6">
@@ -30,6 +23,16 @@
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
+
+                    <!-- form untuk peralatan -->
+                    <div class="form-group peralatan">
+                    <div class="form-group row">
+                        <label for="nama" class="col-lg-2 col-lg-offset-1 control-label">Kode kendaraan</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="nama" id="nama" class="form-control" required autofocus>
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <label for="no_pol" class="col-lg-2 col-lg-offset-1 control-label">Kode Aset/No Polisi</label>
                         <div class="col-lg-6">
@@ -37,7 +40,7 @@
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
-                    <div class="form-group row_user" style="display: none">
+                    <div class="form-group row_user">
                         <label for="user" class="col-lg-2 col-lg-offset-1 control-label">User</label>
                         <div class="col-lg-6">
                             <input type="text" name="user" id="user" class="form-control" required autofocus>
@@ -57,6 +60,7 @@
                             <textarea name="alamat" id="alamat" rows="3" class="form-control"></textarea>
                             <span class="help-block with-errors"></span>
                         </div>
+                    </div>
                     </div>
                 </div>
                 <div class="modal-footer">

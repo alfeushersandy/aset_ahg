@@ -10,6 +10,14 @@
 @endsection
 
 @section('content')
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"> <a href="{{ route('service.history') }}">
+        <span>History per item</span>
+    </a></li>
+    <li role="presentation"><a href="{{ route('service.allArmada') }}">
+        <span>Total seluruh item</span>
+    </a></li>
+</ul>
 <div class="row">
     <div class="col-lg-12">
         <div class="box">

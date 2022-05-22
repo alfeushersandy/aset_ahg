@@ -103,7 +103,8 @@ class BarangController extends Controller
         }
 
         $no  = 1;
-        $pdf = PDF::loadView('barang.barcode', compact('dataproduk', 'no'));
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled'=>true,'isRemoteEnabled'=>true])
+        ->loadView('barang.barcode', compact('dataproduk', 'no'));
         $pdf->setPaper('a4', 'potrait');
         return $pdf->stream('produk.pdf');
     }

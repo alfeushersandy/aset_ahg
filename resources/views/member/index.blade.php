@@ -15,7 +15,6 @@
         <div class="box">
             <div class="box-header with-border">
                 <button onclick="addForm('{{ route('member.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
-                <button onclick="cetakMember('{{ route('member.cetak_member') }}')" class="btn btn-info btn-xs btn-flat"><i class="fa fa-id-card"></i> Cetak Member</button>
             </div>
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-member">
@@ -29,7 +28,7 @@
                             <th>Kode</th>
                             <th>Kategori</th>
                             <th>Kode Asset</th>
-                            <th>No Polisi/No Seri</th>
+                            <th>Identitas Aset</th>
                             <th>User / Operator</th>
                             <th>Lokasi</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
@@ -89,7 +88,7 @@
         });
 
         $('.row-kategori').on('change', function(){
-            $('.row_user').show();
+            $('.peralatan').show();
         })
     });
 
@@ -97,6 +96,7 @@
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Tambah Member');
 
+        $('.peralatan').hide();
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
         $('#modal-form [name=_method]').val('post');

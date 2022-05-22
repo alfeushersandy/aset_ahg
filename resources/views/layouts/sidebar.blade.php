@@ -66,11 +66,6 @@
                     <i class="fa fa-file-pdf-o"></i> <span>Laporan Service</span>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('service.allArmada') }}">
-                    <i class="fa fa-file-pdf-o"></i> <span>Laporan All Service</span>
-                </a>
-            </li>
             <li class="header">SYSTEM</li>
             <li>
                 <a href="{{ route('user.index') }}">
