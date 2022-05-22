@@ -40,7 +40,7 @@
                     <div class="form-group row">
                         <label for="harga" class="col-lg-2 col-lg-offset-1 control-label">Harga</label>
                         <div class="col-lg-6">
-                            <input type="number" name="harga" id="harga" class="form-control" required>
+                            <input type="number" name="harga" id="harga" class="form-control" required value="0">
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>

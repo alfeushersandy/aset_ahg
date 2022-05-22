@@ -48,16 +48,14 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="telepon" class="col-lg-2 col-lg-offset-1 control-label">Telepon</label>
+                        <label for="id_lokasi" class="col-lg-2 col-lg-offset-1 control-label">Unit / Lokasi</label>
                         <div class="col-lg-6">
-                            <input type="text" name="telepon" id="telepon" class="form-control" required>
-                            <span class="help-block with-errors"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="alamat" class="col-lg-2 col-lg-offset-1 control-label">Alamat</label>
-                        <div class="col-lg-6">
-                            <textarea name="alamat" id="alamat" rows="3" class="form-control"></textarea>
+                            <select name="id_lokasi" id="id_lokasi" class="form-control" required>
+                                <option value="">Pilih Unit/Lokasi</option>
+                                @foreach ($lokasi as $key => $item)
+                                <option value="{{ $key }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>

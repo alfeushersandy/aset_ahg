@@ -53,7 +53,7 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        $produk = Barang::latest()->first() ?? new Barang();
+        $produk = Barang::orderBy('kode_barang', 'DESC')->latest()->first() ?? new Barang();
         $request['kode_barang'] = 'P'. tambah_nol_didepan((int)$produk->id_barang +1, 6);
 
         $produk = Barang::create($request->all());

@@ -18,8 +18,9 @@ class MemberController extends Controller
      */
     public function index()
     {
+        $lokasi = Lokasi::all()->pluck('nama_lokasi', 'id_lokasi');
         $kategori = Kategori::all()->pluck('nama_kategori', 'id_kategori');
-        return view('member.index', compact('kategori'));
+        return view('member.index', compact('kategori', 'lokasi'));
     }
 
     public function data()
@@ -73,15 +74,17 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        $member = Member::latest()->first() ?? new Member();
+        $member = Member::orderBy('kode_member', 'DESC')->latest()->first() ?? new Member();
+        
         $kode_member = (int) $member->kode_member +1;
 
         $member = new Member();
         $member->kode_member = tambah_nol_didepan($kode_member, 5);
+        $member->id_kategori = $request->id_kategori;
         $member->kode_kabin = $request->nama;
         $member->nopol = $request->no_pol;
         $member->user = $request->user;
-        $member->lokasi = $request->lokasi;
+        $member->id_lokasi = $request->id_lokasi;
         $member->save();
 
         return response()->json('Data berhasil disimpan', 200);
