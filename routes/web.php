@@ -24,6 +24,8 @@ use App\Http\Controllers\{
     BarangController,
     PermintaandetailController,
     DepartemenController,
+    MobilisasiController,
+    MobilisasidetailController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +68,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/barang', BarangController::class);
 
         Route::get('/member/data', [MemberController::class, 'data'])->name('member.data');
+        Route::get('/member/getcategory/{id}', [MemberController::class, 'getcategory'])->name('member.getcategory');
         Route::post('/member/cetak-member', [MemberController::class, 'cetakMember'])->name('member.cetak_member');
         Route::resource('/member', MemberController::class);
 
@@ -113,6 +116,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/permintaan/nota', [PermintaanController::class, 'notaBesar'])->name('permintaan.nota_besar');
         Route::resource('/permintaan', PermintaanController::class)
             ->except('create');
+
+        Route::get('/mobilisasi/data', [MobilisasiController::class, 'data'])->name('mobilisasi.data');
+        Route::post('/mobilisasi/create', [MobilisasiController::class, 'create'])->name('mobilisasi.create');
+        Route::get('/mobilisasi/selesai', [MobilisasiController::class, 'selesai'])->name('mobilisasi.selesai');
+        Route::get('/mobilisasi/nota', [MobilisasiController::class, 'notaBesar'])->name('mobilisasi.nota_besar');
+        Route::resource('/mobilisasi', MobilisasiController::class);
+
+        Route::get('/mobilisasidetail/{id}/data', [MobilisasidetailController::class, 'data'])->name('mobilisasidetail.data');
+        Route::resource('/mobilisasidetail', MobilisasidetailController::class);
 
         Route::get('/permintaandetail/{id}/data', [PermintaandetailController::class, 'data'])->name('permintaandetail.data');
         Route::resource('/permintaandetail', PermintaandetailController::class);

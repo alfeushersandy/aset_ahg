@@ -27,4 +27,8 @@ class Member extends Model
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id_lokasi');
     }
+
+    public function mobilisasidetail() {
+        return $this->hasMany(mobilisasidetail::class, 'id_aset', 'id');
+    }
 }

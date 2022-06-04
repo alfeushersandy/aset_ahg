@@ -17,4 +17,14 @@ class Lokasi extends Model
     {
         return $this->hasMany(Member::class, 'id_lokasi', 'id_lokasi');
     }
+
+    public function mobilisasi()
+    {
+        return $this->hasMany(Mobilisasi::class, 'id_lokasi', 'id_lokasi_pemohon');
+    }
+
+    public function mobilisasidetail()
+    {
+        return $this->hasMany(Mobilisasidetail::class, 'id_lokasi', 'lokasi_awal');
+    }
 }

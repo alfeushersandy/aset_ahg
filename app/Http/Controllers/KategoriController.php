@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kategori;
+use App\Models\Departemen;
 
 class KategoriController extends Controller
 {
@@ -14,7 +15,8 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        return view('kategori.index');
+        $departemen = Departemen::all()->pluck('departemen', 'id_departemen');
+        return view('kategori.index', compact('departemen'));
     }
 
     public function data()
@@ -56,6 +58,7 @@ class KategoriController extends Controller
     {
         $kategori = new Kategori();
         $kategori->nama_kategori = $request->nama_kategori;
+        $kategori->id_departemen = $request->id_departemen;
         $kategori->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -96,6 +99,7 @@ class KategoriController extends Controller
     {
         $kategori = Kategori::find($id);
         $kategori->nama_kategori = $request->nama_kategori;
+        $kategori->id_departemen = $request->id_departemen;
         $kategori->update();
 
         return response()->json('Data berhasil disimpan', 200);

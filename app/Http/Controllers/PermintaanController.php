@@ -18,7 +18,7 @@ class PermintaanController extends Controller
     {
         $lokasi = Lokasi::all()->pluck('nama_lokasi', 'id_lokasi');
         $kendaraan = Member::all()->pluck('kode_kabin', 'kode_member');
-        $mekanik = Petugas::where('kategori_tugas', 'Mekanik')->pluck('nama_petugas', 'id_petugas');
+        $mekanik = Petugas::all()->pluck('nama_petugas', 'id_petugas');
         return view('permintaan.index', compact('kendaraan', 'mekanik', 'lokasi'));
     }
 

@@ -87,20 +87,49 @@
             $(':checkbox').prop('checked', this.checked);
         });
 
-        $('.row-kategori').on('change', function(){
-            $('.peralatan').show();
-        })
+        $('#departemen').on('change', function(){
+            let departemen = $(this).val();
+            kategori(departemen);
+            if(departemen == 1){
+                $('.peralatan').show();
+                $('.it').hide();
+                $('.it input').removeAttr('required autofokus')
+                $('.it select').removeAttr('required')
+            }else if(departemen == 3){
+                $('.peralatan').hide();
+                $('.it').show();
+                $('.peralatan input').removeAttr('required autofokus')
+                $('.peralatan select').removeAttr('required')
+            }
+    
+            });
     });
+
+    function kategori(departemen){
+        $.ajax({
+                url: 'member/getcategory/'+departemen,
+                type:'GET',
+                data: {"_token":"{{csrf_token() }}"},
+                dataType: "json",
+                success: function(data)
+                    {
+                        $('select[name="id_kategori"]').empty();
+                        $.each(data, function(key, kategori) {
+                        $('select[name="id_kategori"]').append('<option value="'+ kategori.id_kategori +'">' + kategori.nama_kategori+ '</option>');
+                        });
+                    }
+                        })
+                }
 
     function addForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Tambah Member');
-
+        
         $('.peralatan').hide();
+        $('.it').hide();
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
         $('#modal-form [name=_method]').val('post');
-        $('#modal-form [name=nama]').focus();
     }
 
     function editForm(url) {
@@ -139,18 +168,6 @@
                     alert('Tidak dapat menghapus data');
                     return;
                 });
-        }
-    }
-
-    function cetakMember(url) {
-        if ($('input:checked').length < 1) {
-            alert('Pilih data yang akan dicetak');
-            return;
-        } else {
-            $('.form-member')
-                .attr('target', '_blank')
-                .attr('action', url)
-                .submit();
         }
     }
 

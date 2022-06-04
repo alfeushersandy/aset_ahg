@@ -60,6 +60,11 @@
                     <i class="fa fa-truck"></i> <span>Permintaan Service</span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('mobilisasi.index') }}">
+                    <i class="fa fa-truck"></i> <span>Mobilisasi / Mutasi Aset</span>
+                </a>
+            </li>
             <li class="header">REPORT</li>
             <li>
                 <a href="{{ route('service.history') }}">
