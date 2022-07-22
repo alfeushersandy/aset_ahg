@@ -12,4 +12,8 @@ class Departemen extends Model
     protected $table = 'departemen';
     protected $primaryKey = 'id_departemen';
     protected $guarded = [];
+
+    public function departemen() {
+        return $this->hasMany(User::class, 'id_departemen', 'id_departemen');
+    }
 }

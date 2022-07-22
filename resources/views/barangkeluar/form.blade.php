@@ -2,8 +2,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <form action="" method="post" class="form-horizontal">
             @csrf
-            @method('post')
-
+            @method('post');
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -12,25 +11,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="name" class="col-lg-3 col-lg-offset-1 control-label">Nama</label>
+                        <label for="tanggal" class="col-lg-2 col-lg-offset-1 control-label">Tanggal</label>
                         <div class="col-lg-6">
-                            <input type="text" name="name" id="name" class="form-control" required autofocus>
+                            <input type="date" value="{{ date('Y-m-d') }}" name="tanggal" id="tanggal" class="form-control datepicker" required autofocus
+                                style="border-radius: 0 !important;">
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="email" class="col-lg-3 col-lg-offset-1 control-label">Email</label>
+                        <label for="pemohon" class="col-lg-2 col-lg-offset-1 control-label">Pemohon</label>
                         <div class="col-lg-6">
-                            <input type="email" name="email" id="email" class="form-control" required>
-                            <span class="help-block with-errors"></span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="departemen" class="col-lg-3 col-lg-offset-1 control-label">Departemen</label>
-                        <div class="col-lg-6">
-                            <select name="departemen" id="departemen" class="form-control departemen-row" required>
-                                <option value="">Pilih Departemen</option>
-                                @foreach ($departemen as $key => $item)
+                            <select name="pemohon" id="pemohon" class="form-control" required>
+                                <option value="">Pilih Pemohon</option>
+                                @foreach ($mekanik as $key => $item)
                                 <option value="{{ $key }}">{{ $item }}</option>
                                 @endforeach
                             </select>
@@ -38,20 +31,20 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="password" class="col-lg-3 col-lg-offset-1 control-label">Password</label>
+                        <label for="keperluan" class="col-lg-2 col-lg-offset-1 control-label">Keperluan</label>
                         <div class="col-lg-6">
-                            <input type="password" name="password" id="password" class="form-control" 
-                            required
-                            minlength="6">
+                            <select name="keperluan" id="keperluan" class="form-control" required>
+                                <option value="">Keperluan</option>
+                                <option value="service">service</option>
+                                <option value="lain lain">Lain Lain</option>
+                            </select>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="password_confirmation" class="col-lg-3 col-lg-offset-1 control-label">Konfirmasi Password</label>
+                        <label for="keterangan" class="col-lg-2 col-lg-offset-1 control-label">Keterangan</label>
                         <div class="col-lg-6">
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" 
-                                required
-                                data-match="#password">
+                            <textarea name="keterangan" id="keterangan" rows="3" class="form-control"></textarea>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>

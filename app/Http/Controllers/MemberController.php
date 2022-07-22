@@ -8,7 +8,9 @@ use App\Models\Setting;
 use App\Models\Lokasi;
 use App\Models\Kendaraandetail;
 use App\Models\Departemen;
+use App\Models\Itdetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PDF;
 
 class MemberController extends Controller
@@ -21,8 +23,15 @@ class MemberController extends Controller
     public function index()
     {
         $lokasi = Lokasi::all()->pluck('nama_lokasi', 'id_lokasi');
-        $departemen = Departemen::all()->pluck('departemen', 'id_departemen');
-        return view('member.index', compact('lokasi', 'departemen'));
+        if(Auth::user()->level == 1){
+            $kategori = Kategori::all()->pluck('nama_kategori', 'id_kategori');
+            $departemen = Departemen::all()->pluck('departemen', 'id_departemen');
+        }else{
+            $kategori = Kategori::where('id_departemen', Auth::user()->id_departemen)->pluck('nama_kategori', 'id_kategori');
+            $departemen = Departemen::where('id_departemen', Auth::user()->id_departemen)->pluck('departemen', 'id_departemen');
+        }
+        
+        return view('member.index', compact('lokasi', 'departemen', 'kategori'));
     }
 
     public function getcategory($id){
@@ -32,7 +41,15 @@ class MemberController extends Controller
 
     public function data()
     {
-        $member = Member::with('kategori', 'lokasi')->orderBy('id')->get();
+        if(Auth::user()->level == 1){
+            $member = Member::with('kategori','lokasi')->orderBy('id')->get();
+        }else{
+            $member = Member::with('lokasi')
+                    ->whereHas('kategori', function($query){
+                        return $query->where('id_departemen', '=', Auth::user()->id_departemen);
+                    })
+                    ->orderBy('id')->get();
+        }
 
         return datatables()
             ->of($member)
@@ -85,29 +102,34 @@ class MemberController extends Controller
         $member = Member::orderBy('kode_member', 'DESC')->latest()->first() ?? new Member();
         $kode_member = (int) $member->kode_member +1;
 
-        if($departemen == 1){
-            $member = new Member();
-            $member->kode_member = tambah_nol_didepan($kode_member, 5);
-            $member->id_kategori = $request->id_kategori;
-            $member->kode_kabin = $request->nama;
-            $member->nopol = $request->no_pol;
-            $member->user = $request->user;
-            $member->id_lokasi = $request->id_lokasi;
-            $member->save();
-        }else if($departemen == 3){
-            $member = new Member();
-            $member->kode_member = tambah_nol_didepan($kode_member, 5);
-            $member->id_kategori = $request->id_kategori;
-            $member->kode_kabin = $request->nama_it;
-            $member->nopol = $request->tipe_it;
-            $member->user = $request->user_it;
-            $member->id_lokasi = $request->id_lokasi_it;
-            $member->save();
-        }
+        $member = new Member();
+        $member->kode_member = tambah_nol_didepan($kode_member, 5);
+        $member->id_kategori = $request->id_kategori;
+        $member->kode_kabin = $request->nama;
+        $member->nopol = $request->no_pol;
+        $member->user = $request->user;
+        $member->id_lokasi = $request->id_lokasi;
+        $member->id_lokasi_homebase = $request->id_lokasi_homebase;
+        $member->save();
         
+        if($request->id_kategori == 6){
+            $cpu = Member::orderBy('kode_member', 'DESC')->latest()->first();
+            $itdetail = new Itdetail();
+            $itdetail->id_member = $cpu->id;
+            $itdetail->processor = $request->processor;
+            $itdetail->motherboard = $request->motherboard;
+            $itdetail->ram = $request->ram; 
+            $itdetail->vga = $request->vga;
+            $itdetail->os = $request->os; 
+            $itdetail->keyboard = $request->keyboard;
+            $itdetail->mouse = $request->mouse;
+            $itdetail->network = $request->network;
+            $itdetail->keterangan = $request->keterangan;
+            $itdetail->save();
+        }
 
 
-        return response()->json('data berhasil disimpan', 200);
+        return response()->json($member);
     }
 
     /**

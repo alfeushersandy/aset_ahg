@@ -17,6 +17,11 @@
                 <div class="btn-group">
                     <button onclick="addForm('{{ route('mobilisasi.create') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
                 </div>
+                @if (session('id_mobilisasi'))
+                    <div class="btn-group">
+                        <a href="{{ route('mobilisasidetail.index') }}" class="btn btn-info btn-xs btn-flat"><i class="fa fa-pencil"></i> Transaksi Aktif</a>
+                    </div>
+                @endif
             </div>
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-produk">
@@ -71,6 +76,7 @@
         $('[name=select_all]').on('click', function () {
             $(':checkbox').prop('checked', this.checked);
         });
+
     });
     
     
@@ -99,9 +105,9 @@
             .done((response) => {
                 console.log(response);
                 $('#modal-form [name=tanggal]').val(response.tanggal);
-                $('#modal-form [name=kode_customer]').val(response.kode_customer);
-                $('#modal-form [name=Keluhan]').val(response.Keluhan);
-                $('#modal-form [name=id_mekanik]').val(response.id_mekanik);
+                $('#modal-form [name=pemohon]').val(response.pemohon);
+                $('#modal-form [name=id_lokasi_pemohon]').val(response.id_lokasi_pemohon);
+                $('#modal-form [name=keterangan]').val(response.keterangan);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');

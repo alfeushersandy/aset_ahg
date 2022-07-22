@@ -90,6 +90,21 @@ class MobilisasiController extends Controller
         return redirect()->route('mobilisasi.selesai');
     }
 
+    public function show($id)
+    {
+        $permintaan = Mobilisasi::find($id);
+
+        return response()->json($permintaan);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $permintaan = Mobilisasi::find($id);
+        $permintaan->update($request->all());
+
+        return redirect()->route('mobilisasi.index');
+    }
+
     public function selesai()
     {
         $setting = Setting::first();
@@ -111,6 +126,14 @@ class MobilisasiController extends Controller
         $pdf = PDF::loadView('mobilisasi.nota_besar', compact('setting', 'mobilisasi', 'detail'));
         $pdf->setPaper(0,0,609,440, 'potrait');
         return $pdf->stream('Surat_Jalan-'. date('Y-m-d-his') .'.pdf');
+    }
+    
+    public function destroy($id)
+    {
+        $permintaan = Mobilisasi::find($id);
+        $permintaan->delete();
+
+        return response(null, 204);
     }
 
    

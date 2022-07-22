@@ -88,7 +88,7 @@
 
         $.get(url)
             .done((response) => {
-                $('#modal-form [name=departemen]').val(response.departemen);
+                $('#modal-form [name=nama_departemen]').val(response.departemen);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');

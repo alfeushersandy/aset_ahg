@@ -4,22 +4,39 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Departemen;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     public function index()
     {
-        return view('user.index');
+        $departemen = Departemen::orderBy('departemen')->pluck('departemen', 'id_departemen');
+        return view('user.index', compact('departemen'));
     }
 
     public function data()
     {
-        $user = User::orderBy('id', 'desc')->get();
-
+        if(Auth::user()->level == 1){
+            $user = User::leftjoin('departemen', function($join){
+                $join->on('departemen.id_departemen', '=', 'users.id_departemen');
+            })
+            ->orderBy('id', 'desc')->get();
+        }else{
+            $user = User::where('users.id_departemen', Auth::user()->id_departemen)
+            ->leftjoin('departemen', function($join){
+                $join->on('departemen.id_departemen', '=', 'users.id_departemen');
+            })
+            ->orderBy('id', 'desc')->get();
+        }
+        
         return datatables()
             ->of($user)
             ->addIndexColumn()
+            ->addColumn('departemen', function($user){
+                return $user->departemen;
+            })
             ->addColumn('aksi', function ($user) {
                 return '
                 <div class="btn-group">
@@ -28,7 +45,7 @@ class UserController extends Controller
                 </div>
                 ';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi', 'departemen'])
             ->make(true);
     }
 
@@ -55,7 +72,9 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->level = 2;
+        $user->id_departemen = $request->departemen;
         $user->foto = '/img/user.jpg';
+        
         $user->save();
 
         return response()->json('Data berhasil disimpan', 200);
@@ -97,6 +116,7 @@ class UserController extends Controller
         $user = User::find($id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->id_departemen = $request->departemen;
         if ($request->has('password') && $request->password != "") 
             $user->password = bcrypt($request->password);
         $user->update();

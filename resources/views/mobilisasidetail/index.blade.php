@@ -148,7 +148,25 @@
             paginate: false,
         })
         
-    table2 = $('.table-aset').DataTable();
+        table2 = $('.table-aset').DataTable({
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            autoWidth: false,
+            lengthChange: false,
+            ajax: {
+                url: '{{ route('mobilisasidetail.aset') }}',
+            },
+            columns: [
+                {data: 'DT_RowIndex', searchable: false, sortable: false},
+                {data: 'kode_member'},
+                {data: 'kategori'},
+                {data: 'kode_kabin'},
+                {data: 'nopol'},
+                {data: 'lokasi'},
+                {data: 'aksi', searchable: false, sortable: false},
+            ]
+        })
 
         $('.btn-simpan').on('click', function () {
             $('.form-sparepart').submit();
@@ -180,6 +198,7 @@
                 })
                 .done((response) => {
                     table.ajax.reload() 
+                    table2.ajax.reload()
                 })
                 .fail((errors) => {
                     alert('Tidak dapat menghapus data');

@@ -41,6 +41,7 @@
 </div>
 
 @includeIf('member.form')
+@includeIf('member.formedit')
 @endsection
 
 @push('scripts')
@@ -83,30 +84,27 @@
             }
         });
 
+        $('#modal-form-edit').validator().on('submit', function (e) {
+            if (! e.preventDefault()) {
+                $.post($('#modal-form-edit form').attr('action'), $('#modal-form-edit form').serialize())
+                    .done((response) => {
+                        $('#modal-form-edit').modal('hide');
+                        table.ajax.reload();
+                    })
+                    .fail((errors) => {
+                        alert('Tidak dapat menyimpan data');
+                        return;
+                    });
+            }
+        });
+
         $('[name=select_all]').on('click', function () {
             $(':checkbox').prop('checked', this.checked);
         });
 
         $('#departemen').on('change', function(){
-            let departemen = $(this).val();
-            kategori(departemen);
-            if(departemen == 1){
-                $('.peralatan').show();
-                $('.it').hide();
-                $('.it input').removeAttr('required autofokus')
-                $('.it select').removeAttr('required')
-            }else if(departemen == 3){
-                $('.peralatan').hide();
-                $('.it').show();
-                $('.peralatan input').removeAttr('required autofokus')
-                $('.peralatan select').removeAttr('required')
-            }
-    
-            });
-    });
-
-    function kategori(departemen){
-        $.ajax({
+            var departemen = $(this).val();
+            $.ajax({
                 url: 'member/getcategory/'+departemen,
                 type:'GET',
                 data: {"_token":"{{csrf_token() }}"},
@@ -119,7 +117,53 @@
                         });
                     }
                         })
+                if(departemen == 1){
+                    $('.peralatan').show();
+                    $('#label_kategori').text('Kategori');
+                    $('#label_nama_aset').text('Kode Kendaraan');
+                    $('#label_kode_aset').text('Kode Aset/No Polisi')
+                    $('.it').hide()
+                }else if(departemen == 3){
+                    $('.peralatan').show();
+                    $('.it').hide()
+                    $('#label_kategori').text('Kategori IT');
+                    $('#label_nama_aset').text('No Inventory');
+                    $('#label_kode_aset').text('Nama Inventory')
+                        $('#id_kategori').on('change', function(){
+                            kategori = $('#id_kategori').val()
+                            if(kategori == 6){
+                                $('.it').show()
+                                $('#motherboard').attr('required');
+                                $('#ram').attr('required');
+                                $('#vga').attr('required');
+                                $('#os').attr('required');
+                                $('#processor').attr('required');
+                                $('#keyboard').attr('required');
+                                $('#mouse').attr('required');
+                                $('#network').attr('required');
+                                $('#keterangan').attr('required');
+                            }else{
+                                $('#motherboard').removeAttr('required');
+                                $('#ram').removeAttr('required');
+                                $('#vga').removeAttr('required');
+                                $('#os').removeAttr('required');
+                                $('#processor').removeAttr('required');
+                                $('#keyboard').removeAttr('required');
+                                $('#mouse').removeAttr('required');
+                                $('#network').removeAttr('required');
+                                $('.it').hide()
+                            }
+                        })
+                }else{
+                    $('.peralatan').hide();
+                    $('.it').hide()
                 }
+        
+            });
+   
+    });
+
+    
 
     function addForm(url) {
         $('#modal-form').modal('show');
@@ -133,21 +177,21 @@
     }
 
     function editForm(url) {
-        $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Edit Member');
+        $('#modal-form-edit').modal('show');
+        $('#modal-form-edit .modal-title').text('Edit Member');
 
-        $('#modal-form form')[0].reset();
-        $('#modal-form form').attr('action', url);
-        $('#modal-form [name=_method]').val('put');
-        $('#modal-form [name=nama]').focus();
+        $('#modal-form-edit form')[0].reset();
+        $('#modal-form-edit form').attr('action', url);
+        $('#modal-form-edit [name=_method]').val('put');
+        $('#modal-form-edit [name=nama]').focus();
 
         $.get(url)
             .done((response) => {
-                $('#modal-form [name=nama]').val(response.nama);
-                $('#modal-form [name=no_pol]').val(response.no_pol);
-                $('#modal-form [name=user]').val(response.user);
-                $('#modal-form [name=telepon]').val(response.telepon);
-                $('#modal-form [name=alamat]').val(response.alamat);
+                $('#modal-form-edit [name=nopol]').val(response.nopol);
+                $('#modal-form-edit [name=user]').val(response.user);
+                $('#modal-form-edit [name=kode_kabin]').val(response.kode_kabin);
+                $('#modal-form-edit [name=id_kategori]').val(response.id_kategori);
+                $('#modal-form-edit [name=id_lokasi]').val(response.id_lokasi);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');

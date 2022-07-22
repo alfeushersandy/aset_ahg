@@ -63,4 +63,8 @@ class User extends Authenticatable
     {
         return $query->where('level', '!=', 1);
     }
+
+    public function departemen() {
+        return $this->belongsTo(Departemen::class, 'id_departemen', 'id_departemen');
+    }
 }

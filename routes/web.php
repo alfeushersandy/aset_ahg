@@ -24,6 +24,7 @@ use App\Http\Controllers\{
     BarangController,
     PermintaandetailController,
     DepartemenController,
+    GudangController,
     MobilisasiController,
     MobilisasidetailController,
 };
@@ -47,7 +48,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::group(['middleware' => 'level:1'], function () {
+    Route::group(['middleware' => 'level:1,2'], function () {
         Route::get('/departemen/data', [DepartemenController::class, 'data'])->name('departemen.data');
         Route::resource('/departemen', DepartemenController::class);
 
@@ -124,7 +125,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/mobilisasi', MobilisasiController::class);
 
         Route::get('/mobilisasidetail/{id}/data', [MobilisasidetailController::class, 'data'])->name('mobilisasidetail.data');
+        Route::get('/mobilisasidetail/aset', [MobilisasidetailController::class, 'aset'])->name('mobilisasidetail.aset');
         Route::resource('/mobilisasidetail', MobilisasidetailController::class);
+
+        Route::get('/gudang/keluar', [GudangController::class, 'index'])->name('gudang.index');
 
         Route::get('/permintaandetail/{id}/data', [PermintaandetailController::class, 'data'])->name('permintaandetail.data');
         Route::resource('/permintaandetail', PermintaandetailController::class);

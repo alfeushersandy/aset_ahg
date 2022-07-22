@@ -52,8 +52,37 @@ class MobilisasidetailController extends Controller
                 ->make(true);
     }
 
+    public function aset(){
+        $id_mobilisasi = session('id_mobilisasi');
+        $mobilisasidetail = Mobilisasidetail::where('id_mobilisasi', $id_mobilisasi)->get('id_aset');
+        $member = Member::with('kategori', 'lokasi')->whereNotIn('id', $mobilisasidetail)->get();
+
+        return datatables()
+        ->of($member)
+        ->addIndexColumn()
+        ->addColumn('lokasi', function($member){
+            return $member->lokasi->nama_lokasi;
+        })
+        ->addColumn('kategori', function($member){
+            return $member->kategori->nama_kategori;
+        })
+        ->addColumn('aksi', function ($member) {
+            return '
+            <div class="btn-group">
+                <a href="#" class="btn btn-primary btn-xs btn-flat"
+                    onclick="tampilForm(' . $member->id . ', ' . $member->kode_member . ')">
+                <i class="fa fa-check-circle"></i>
+                Pilih
+                </a>
+            </div>
+            ';
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+    }
+
     public function show($id){
-        $member = Member::where('id', $id)-get();
+        $member = Member::where('id', $id)->get();
 
     }
 
