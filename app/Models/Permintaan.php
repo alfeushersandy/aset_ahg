@@ -23,4 +23,8 @@ class Permintaan extends Model
     public function service() {
         return $this->hasOne(Service::class, 'id_permintaan', 'id');
     }
+
+    public function lokasi() {
+        return $this->hasOne(Lokasi::class, 'id_lokasi', 'id_lokasi');
+    }
 }

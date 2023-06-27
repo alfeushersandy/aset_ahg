@@ -10,25 +10,30 @@
 @endsection
 
 @section('content')
+@if (Auth::user()->level == 4)
 <ul class="nav nav-tabs">
-    <li role="presentation" > <a href="{{ route('permintaan.index') }}">
-        <span>Permintaan Service</span>
-    </a></li>
-    <li role="presentation"><a href="{{ route('pemeriksaan.index') }}">
-        <span>pemeriksaan Service</span>
-    </a></li>
-    <li role="presentation"><a href="{{ route('service.index') }}">
+    <li role="presentation" class="active"><a href="{{ route('service.index') }}">
         <span>Service On Progress</span>
     </a></li>
-    <li role="presentation" class="active"><a href="{{ route('service.selesai') }}">
-        <span>Service Selesai</span>
-    </a></li>
 </ul>
+@else
+    <ul class="nav nav-tabs">
+        <li role="presentation" > <a href="{{ route('permintaan.index') }}">
+            <span>Permintaan Service</span>
+        </a></li>
+        <li role="presentation"><a href="{{ route('service.index') }}">
+            <span>Service On Progress</span>
+        </a></li>
+        <li role="presentation" class="active"><a href="{{ route('service.selesai') }}">
+            <span>Service Selesai</span>
+        </a></li>
+    </ul>
+@endif
 <div class="row">
     <div class="col-lg-12">
         <div class="box">
             <div class="box-body table-responsive">
-                <table class="table table-stiped table-bordered table-pembelian">
+                <table class="table table-stiped table-bordered table-selesai">
                     <thead>
                         <th width="5%">No</th>
                         <th>Tanggal</th>
@@ -66,6 +71,11 @@
 
 @push('scripts')
 <script>
+
+    let table
+    $(function () {
+        table = $('.table-selesai').DataTable();
+    })
     // let table, table1;
 
     // $(function () {

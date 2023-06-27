@@ -1,7 +1,7 @@
 <?php
 
 function format_uang ($angka) {
-    return number_format($angka, 0, ',', '.');
+    return number_format((float)$angka, 0, ',', '.');
 }
 
 function terbilang ($angka) {

@@ -68,7 +68,7 @@
                         <label for="kode_produk" class="col-lg-2">Kode Produk</label>
                         <div class="col-lg-5">
                             <div class="input-group">
-                                <input type="hidden" name="id_permintaan" id="id_permintaan" value="{{ $id_permintaan }}">
+                                <input type="hidden" name="id_permintaan" id="id_permintaan" value="{{ $permintaan->id }}">
                                 <input type="hidden" name="id_produk" id="id_produk">
                                 <input type="text" class="form-control" name="kode_produk" id="kode_produk">
                                 <span class="input-group-btn">
@@ -99,15 +99,15 @@
                     <div class="col-lg-4">
                         <form action="{{ route('permintaan.store') }}" class="form-sparepart" method="post">
                             @csrf
-                            <input type="hidden" name="id_permintaan" value="{{ $id_permintaan }}">
-                            <input type="hidden" name="total" id="total">
-                            <input type="hidden" name="total_item" id="total_item">
+                            <input type="hidden" name="id_permintaan" value="{{ $permintaan->id }}">
+                            <input type="hidden" name="total" id="total" value="{{$total}}">
+                            <input type="hidden" name="total_item" id="total_item" value="{{$total_item}}">
                             <input type="hidden" name="bayar" id="bayar">
 
                             <div class="form-group row">
                                 <label for="totalrp" class="col-lg-2 control-label">Total</label>
                                 <div class="col-lg-8">
-                                    <input type="text" id="totalrp" class="form-control" readonly>
+                                    <input type="text" id="totalrp" class="form-control" value="Rp. {{format_uang($total)}}" readonly>
                                 </div>
                             </div>
                         </form>
@@ -123,11 +123,13 @@
 </div>
 
 @includeIf('sparepartdetail.produk')
+@includeIf('sparepartdetail.ban')
+@includeIf('sparepartdetail.form')
 @endsection
 
 @push('scripts')
 <script>
-    let table, table2;
+    let table, table2, table3;
 
     $(function () {
         $('body').addClass('sidebar-collapse');
@@ -138,7 +140,7 @@
             serverSide: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('permintaandetail.data', $id_permintaan) }}',
+                url: '{{ route('permintaandetail.data', $permintaan->id) }}',
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
@@ -153,54 +155,73 @@
             bSort: false,
             paginate: false
         })
-        .on('draw.dt', function () {
-            loadForm($('#diskon').val());
-        });
+
         table2 = $('.table-produk').DataTable();
+        table3 = $('.table-ban').DataTable({
+            order : [1, 'DESC'],
+                responsive: true,
+                processing: true,
+                serverSide: false,
+                autoWidth: false,
+                data: [],
+                columns: [
+                    {data: 'select_all'},
+                    {data: 'id_barang'},
+                    {data: 'nomor_seri'},
+                    {data: 'kode_ban'},
+                    {data: 'tgl_beli'},
+                ],
+            });
+    
 
-        $(document).on('input', '.quantity', function () {
-            let id = $(this).data('id');
-            let jumlah = parseInt($(this).val());
-
-            if (jumlah < 1) {
-                $(this).val(1);
-                alert('Jumlah tidak boleh kurang dari 1');
-                return;
-            }
-            if (jumlah > 10000) {
-                $(this).val(10000);
-                alert('Jumlah tidak boleh lebih dari 10000');
-                return;
-            }
-
-            $.post(`{{ url('/permintaandetail') }}/${id}`, {
-                    '_token': $('[name=csrf-token]').attr('content'),
-                    '_method': 'put',
-                    'jumlah': jumlah
-                })
-                .done(response => {
-                    $(this).on('mouseout', function () {
-                        table.ajax.reload() 
-                    });
-                })
-                .fail(errors => {
-                    alert('Tidak dapat menyimpan data');
-                    return;
-                });
-        });
-
-        $(document).on('input', '#diskon', function () {
-            if ($(this).val() == "") {
-                $(this).val(0).select();
-            }
-
-            loadForm($(this).val());
-        });
 
         $('.btn-simpan').on('click', function () {
             $('.form-sparepart').submit();
         });
     });
+
+    $('#tombol_simpan').on('click', function(e){
+        let stok = $('#stok').val();
+        let id_barang = $('#id_barang').val();
+        let url = '/permintaandetail/' + id_barang + '/detail';
+        if(! e.preventDefault()){
+            $.post('{{ route('permintaandetail.store') }}', $('#modal-aset-form form').serialize())
+            .done(response => {
+                if($('#modal-aset-form [name=id_kategori]').val() == 5)
+                {
+                        if(parseInt($('#jumlah').val()) <=  stok){
+                            let quantity = $('#jumlah').val();
+                            $('#modal-aset-form').modal('hide');
+                            $('#modal-ban').modal('show');
+                            $('#modal-ban [id=quantity]').val(quantity);
+                            table3.ajax.url(url)
+                            table3.ajax.reload();
+                    }else{
+                        alert(`Stok tersedia adalah ${stok}`);
+                    }
+                    }else{
+                        $('#modal-aset-form').modal('hide');
+                        table.ajax.reload();
+                        }
+                })
+                .fail(errors => {
+                    alert('Tidak dapat menyimpan data');
+                    return;
+                });
+        }
+    })
+
+    $('#tombol_save').on('click', function(){
+        let checkbox = $('[name="id_detail_barang[]"]:checked');
+        let quantity = $('#quantity').val();
+
+        if(checkbox.length > quantity || checkbox.length < quantity){
+            alert(`check sesuai dengan yang anda inputkan !! jumlah yang anda inputkan adalah : ${quantity}`)
+        }else{
+            $('.form-ban').submit();
+        }
+        
+    })
 
     function tampilProduk() {
         $('#modal-produk').modal('show');
@@ -215,6 +236,23 @@
         $('#kode_produk').val(kode);
         hideProduk();
         tambahProduk();
+    }
+
+    function tampilForm(id, kode, harga, id_kategori, nama_barang, stok) {
+        hideProduk();
+        $('#modal-aset-form').modal('show');
+        $('#id_permintaan').val(id);
+        $('#id_barang').val(id);
+        $('#kode_barang').val(kode);
+        $('#harga').val(harga);
+        $('#id_kategori').val(id_kategori);
+        $('#nama_barang').val(nama_barang);
+        $('#stok').val(stok);
+        if( id_kategori == 8){
+            $('#tombol_simpan').text('Next');
+        }else{
+            $('#tombol_simpan').text('Simpan');
+        }
     }
 
     function tambahProduk() {
@@ -243,24 +281,6 @@
                     return;
                 });
         }
-    }
-
-    function loadForm() {
-        $('#total').val($('.total').text());
-        $('#total_item').val($('.total_item').text());
-
-        $.get(`{{ url('/sparepartdetail/loadform') }}/${$('.total').text()}`)
-            .done(response => {
-                $('#totalrp').val('Rp. '+ response.totalrp);
-                $('#bayarrp').val('Rp. '+ response.bayarrp);
-                $('#bayar').val(response.bayar);
-                $('.tampil-bayar').text('Rp. '+ response.bayarrp);
-                $('.tampil-terbilang').text(response.terbilang);
-            })
-            .fail(errors => {
-                alert('Tidak dapat menampilkan data');
-                return;
-            })
     }
 </script>
 @endpush

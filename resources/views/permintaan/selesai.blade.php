@@ -23,7 +23,7 @@
                 @if ($setting->tipe_nota == 1)
                 <button class="btn btn-warning btn-flat" onclick="notaKecil('{{ route('permintaan.nota_kecil') }}', 'Nota Kecil')">Cetak Nota</button>
                 @else
-                <button class="btn btn-warning btn-flat" onclick="notaBesar('{{ route('permintaan.nota_besar') }}', 'Nota PDF')">Cetak Nota</button>
+                <button class="btn btn-warning btn-flat" onclick="notaBesar('{{ route('permintaan.nota_besar', $id_permintaan) }}', 'Nota PDF')">Cetak Nota</button>
                 @endif
                 <a href="{{ route('service.index') }}" class="btn btn-primary btn-flat">Kembali Ke Daftar Service</a>
             </div>

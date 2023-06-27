@@ -42,6 +42,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="keperluan" id="label_keperluan" class="col-lg-2 col-lg-offset-1 control-label"></label>
+                        <div class="col-lg-6" name="input_keperluan">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="keterangan" class="col-lg-2 col-lg-offset-1 control-label">Keterangan</label>
                         <div class="col-lg-6">
                             <textarea name="keterangan" id="keterangan" rows="3" class="form-control"></textarea>

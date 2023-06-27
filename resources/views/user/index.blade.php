@@ -22,7 +22,6 @@
                         <th width="5%">No</th>
                         <th>Nama</th>
                         <th>Email</th>
-                        <th>Departemen</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </thead>
                 </table>
@@ -51,7 +50,6 @@
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'name'},
                 {data: 'email'},
-                {data: 'departemen'},
                 {data: 'aksi', searchable: false, sortable: false},
             ]
         });

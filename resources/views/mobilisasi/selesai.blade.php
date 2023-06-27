@@ -25,7 +25,7 @@
                 @else
                 <button class="btn btn-warning btn-flat" onclick="notaBesar('{{ route('mobilisasi.nota_besar') }}', 'Nota PDF')">Cetak Nota</button>
                 @endif
-                <a href="{{ route('service.index') }}" class="btn btn-primary btn-flat">Kembali Ke Daftar Service</a>
+                <a href="{{ route('mobilisasi.index') }}" class="btn btn-primary btn-flat">Kembali Ke Daftar Mobilisasi</a>
             </div>
         </div>
     </div>

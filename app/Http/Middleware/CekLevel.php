@@ -12,7 +12,7 @@ class CekLevel
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param mixed $level  [1. admin | 2. mekanik]
+     * @param mixed $level  [1. admin | 2. mekanik | 4. logistik]
      * @return mixed
      */
     public function handle(Request $request, Closure $next, ...$level)
@@ -21,6 +21,6 @@ class CekLevel
             return $next($request);
         }
 
-        return redirect()->route('dashboard');
+        return redirect()->back();
     }
 }

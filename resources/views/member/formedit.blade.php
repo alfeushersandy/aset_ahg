@@ -27,16 +27,52 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="kode_kabin" class="col-lg-2 col-lg-offset-1 control-label">Kode kendaraan</label>
+                            <label for="merek" id="label_merek_aset" class="col-lg-2 col-lg-offset-1 control-label">Merk</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="merek" id="merek" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="kode_kabin" id="label_kode_kabin" class="col-lg-2 col-lg-offset-1 control-label">Kode kendaraan/Kode Kabin</label>
                             <div class="col-lg-6">
                                 <input type="text" name="kode_kabin" id="kode_kabin" class="form-control" required autofocus>
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="nopol" class="col-lg-2 col-lg-offset-1 control-label">Kode Aset/No Polisi</label>
+                            <label for="serial_number" id="label_serial_number" class="col-lg-2 col-lg-offset-1 control-label">No Seri/No Mesin</label>
                             <div class="col-lg-6">
-                                <input type="text" name="nopol" id="nopol" class="form-control" required autofocus>
+                                <input type="text" name="serial_number" id="serial_number" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nopol" id="label_kode_aset" class="col-lg-2 col-lg-offset-1 control-label">Identitas/No Polisi</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="nopol" id="nopol" class="form-control" required>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="asuransi" id="label_kode_aset" class="col-lg-2 col-lg-offset-1 control-label">Asuransi</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="asuransi" id="asuransi" class="form-control">
+                                <span><b>*isi dengan nama Asuransi bila ada</b></span>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="tanggal_pembelian" id="label_tanggal_pembelian" class="col-lg-2 col-lg-offset-1 control-label">Tanggal Perolehan</label>
+                            <div class="col-lg-6">
+                                <input type="date" name="tanggal_pembelian" id="tanggal_pembelian" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="harga_perolehan" id="label_harga_perolehan" class="col-lg-2 col-lg-offset-1 control-label">Harga Perolehan</label>
+                            <div class="col-lg-6">
+                                <input type="number" name="harga_perolehan" id="harga_perolehan" class="form-control">
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
@@ -48,13 +84,40 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="id_lokasi" class="col-lg-2 col-lg-offset-1 control-label">Unit / Lokasi</label>
+                            <label for="id_lokasi" class="col-lg-2 col-lg-offset-1 control-label">Lokasi</label>
                             <div class="col-lg-6">
-                                <select name="id_lokasi" id="id_lokasi" class="form-control" required>
+                                <select name="id_lokasi" id="id_lokasi" class="form-control" disabled>
                                     <option value="">Pilih Unit/Lokasi</option>
                                     @foreach ($lokasi as $key => $item)
                                     <option value="{{ $key }}">{{ $item }}</option>
                                     @endforeach
+                                </select>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="id_home_base" class="col-lg-2 col-lg-offset-1 control-label">Lokasi Homebase</label>
+                            <div class="col-lg-6">
+                                <select name="id_home_base" id="id_home_base" class="form-control" required>
+                                    <option value="">Pilih Unit/Lokasi</option>
+                                    @foreach ($lokasi as $key => $item)
+                                    <option value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="status" class="col-lg-2 col-lg-offset-1 control-label">Status</label>
+                            <div class="col-lg-6">
+                                <select name="status" id="status" class="form-control">
+                                    <option value="">Pilih Status</option>
+                                    <option value="Tersedia">Tersedia</option>
+                                    <option value="On Duty">On Duty</option>
+                                    <option value="Rusak">Rusak</option>
+                                    <option value="On Service">On Service</option>
+                                    <option value="OFF">OFF</option>
+                                    <option value="Terjual">Terjual</option>
                                 </select>
                                 <span class="help-block with-errors"></span>
                             </div>

@@ -10,6 +10,14 @@
 @endsection
 
 @section('content')
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"> <a href="{{ route('mobilisasi.index') }}">
+        <span>Mobilisasi Aset</span>
+    </a></li>
+    <li role="presentation"><a href="{{ route('kembali.index') }}">
+        <span>Pengembalian Aset</span>
+    </a></li>
+</ul>
 <div class="row">
     <div class="col-lg-12">
         <div class="box">
@@ -26,7 +34,7 @@
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-produk">
                     @csrf
-                    <table class="table table-stiped table-bordered">
+                    <table class="table table-stiped table-mobilisasi">
                         <thead>
                             <th width="5%">No</th>
                             <th>Tanggal</th>
@@ -34,6 +42,9 @@
                             <th>Pemohon</th>
                             <th>Lokasi Pemohon</th>
                             <th>Keterangan</th>
+                            <th>Tanggal Kembali</th>
+                            <th>Status</th>
+                            <th>Status Kirim</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -44,14 +55,16 @@
 </div>
 
 @includeIf('mobilisasi.form')
+@includeIf('mobilisasi.detail')
+@includeIf('mobilisasi.form_kirim')
 @endsection
 
 @push('scripts')
 <script>
-    let table;
+    let table, table1;
 
     $(function () {
-        table = $('.table').DataTable({
+        table = $('.table-mobilisasi').DataTable({
             responsive: true,
             processing: true,
             serverSide: true,
@@ -66,18 +79,45 @@
                 {data: 'pemohon'},
                 {data: 'nama_lokasi'},
                 {data: 'keterangan'},
+                {data: 'tanggal_kembali'},
+                {data: 'status'},
+                {data: 'status_kirim'},
                 {data: 'aksi', searchable: false, sortable: false},
             ],
 
             
         });
-        
 
         $('[name=select_all]').on('click', function () {
             $(':checkbox').prop('checked', this.checked);
         });
 
     });
+
+    table1 = $('.table-detail').DataTable({
+            processing: true,
+            bsort: true,
+            dom: 'Brt',
+            columns: [
+                {data: 'DT_RowIndex', searchable: false, sortable: false},
+                {data: 'kode_kabin'},
+                {data: 'identitas'},
+                {data: 'user'},
+                {data: 'tanggal_awal'},
+                {data: 'tanggal_kembali'},
+            ]
+        })
+
+
+
+
+
+    function showDetail(url) {
+            $('#modal-detail').modal('show');
+
+            table1.ajax.url(url);
+            table1.ajax.reload();
+        }
     
     
     
@@ -162,6 +202,10 @@
                 .attr('action', url)
                 .submit();
         }
+    }
+
+    function kirim(){
+        $("#modal-form-kirim").modal('show');
     }
 
     

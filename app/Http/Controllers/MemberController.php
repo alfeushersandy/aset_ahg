@@ -9,6 +9,8 @@ use App\Models\Lokasi;
 use App\Models\Kendaraandetail;
 use App\Models\Departemen;
 use App\Models\Itdetail;
+use App\Models\Mobilisasidetail;
+use App\Models\Permintaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PDF;
@@ -23,7 +25,7 @@ class MemberController extends Controller
     public function index()
     {
         $lokasi = Lokasi::all()->pluck('nama_lokasi', 'id_lokasi');
-        if(Auth::user()->level == 1){
+        if(Auth::user()->level == 1 || Auth::user()->level == 2 ){
             $kategori = Kategori::all()->pluck('nama_kategori', 'id_kategori');
             $departemen = Departemen::all()->pluck('departemen', 'id_departemen');
         }else{
@@ -35,13 +37,13 @@ class MemberController extends Controller
     }
 
     public function getcategory($id){
-        $kategori = Kategori::where('id_departemen', $id)->get();
+        $kategori = Kategori::where('nama_kategori', '!=', 'Spare Part')->where('nama_kategori', '!=', 'Ban')->get();
         return response()->json($kategori);
     }
 
     public function data()
     {
-        if(Auth::user()->level == 1){
+        if(Auth::user()->level == 1 || Auth::user()->level == 2){
             $member = Member::with('kategori','lokasi')->orderBy('id')->get();
         }else{
             $member = Member::with('lokasi')
@@ -66,7 +68,7 @@ class MemberController extends Controller
                 return $member->kategori->nama_kategori;
             })
             ->addColumn('nama_lokasi', function ($member){
-                return $member->lokasi->nama_lokasi;
+                return $member->id_lokasi ? $member->lokasi->nama_lokasi : '';
             })
             ->addColumn('aksi', function ($member) {
                 return '
@@ -98,7 +100,6 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        $departemen = $request->departemen;
         $member = Member::orderBy('kode_member', 'DESC')->latest()->first() ?? new Member();
         $kode_member = (int) $member->kode_member +1;
 
@@ -106,27 +107,21 @@ class MemberController extends Controller
         $member->kode_member = tambah_nol_didepan($kode_member, 5);
         $member->id_kategori = $request->id_kategori;
         $member->kode_kabin = $request->nama;
-        $member->nopol = $request->no_pol;
+        $member->merek = $request->merek;
+        $member->nopol = $request->nopol;
+        $member->asuransi = $request->asuransi;
+        $member->serial_number = $request->serial_number;
+        $member->tanggal_pembelian = $request->tanggal_pembelian;
+        $member->harga_perolehan = $request->harga_perolehan;
         $member->user = $request->user;
-        $member->id_lokasi = $request->id_lokasi;
-        $member->id_lokasi_homebase = $request->id_lokasi_homebase;
-        $member->save();
-        
-        if($request->id_kategori == 6){
-            $cpu = Member::orderBy('kode_member', 'DESC')->latest()->first();
-            $itdetail = new Itdetail();
-            $itdetail->id_member = $cpu->id;
-            $itdetail->processor = $request->processor;
-            $itdetail->motherboard = $request->motherboard;
-            $itdetail->ram = $request->ram; 
-            $itdetail->vga = $request->vga;
-            $itdetail->os = $request->os; 
-            $itdetail->keyboard = $request->keyboard;
-            $itdetail->mouse = $request->mouse;
-            $itdetail->network = $request->network;
-            $itdetail->keterangan = $request->keterangan;
-            $itdetail->save();
+        $member->id_lokasi = $request->id_lokasi_homebase;
+        $member->id_home_base = $request->id_lokasi_homebase;
+        if($request->user == NULL){
+            $member->status = "Tersedia";
+        }else{
+            $member->status = "On Duty"; 
         }
+        $member->save();
 
 
         return response()->json($member);
@@ -178,7 +173,7 @@ class MemberController extends Controller
      */
     public function destroy($id)
     {
-        $member = Member::find($id);
+        $member = Member::find($id);        
         $member->delete();
 
         return response(null, 204);
@@ -200,4 +195,72 @@ class MemberController extends Controller
         $pdf->setPaper(array(0, 0, 566.93, 850.39), 'potrait');
         return $pdf->stream('member.pdf');
     }
+
+    public function memberByLokasi($id_lokasi)
+    {
+        $lokasi = Lokasi::where('id_lokasi', $id_lokasi)->first();
+        $member = Member::with('kategori', 'lokasi')->where('id_lokasi', $id_lokasi)->get();
+        return view('member.detail', compact('member', 'lokasi'));
+    }
+
+    public function memberByKategori($id_kategori)
+    {
+        $kategori = Kategori::where('id_kategori', $id_kategori)->first();
+        $member = Member::with('kategori', 'lokasi')->where('id_kategori', $id_kategori)->get();
+        return view('member.kategori', compact('member', 'kategori'));
+    }
+
+    public function cetakByLokasi($id_lokasi){
+        $setting = Setting::first();
+        $lokasi = Lokasi::where('id_lokasi', $id_lokasi)->first();
+        $member = Member::with('kategori', 'lokasi')->where('id_lokasi', $id_lokasi)->get();
+
+        $pdf = PDF::loadView('member.laporan', compact('setting', 'member', 'lokasi'));
+        $pdf->setPaper(0,0,609,440, 'potrait');
+        return $pdf->stream($lokasi->nama_lokasi . date('Y-m-d-his') .'.pdf');
+
+    }
+
+    public function cetakByKategori($id_kategori){
+        $setting = Setting::first();
+        $kategori = Kategori::where('id_kategori', $id_kategori)->first();
+        $member = Member::with('kategori', 'lokasi')->where('id_kategori', $id_kategori)->get();
+
+        $pdf = PDF::loadView('member.laporan_kategori', compact('setting', 'member', 'kategori'));
+        $pdf->setPaper(0,0,609,440, 'potrait');
+        return $pdf->stream($kategori->nama_kategori . date('Y-m-d-his') .'.pdf');
+    }
+
+    public function detail(Request $request)
+    {
+        $kode_member = $request->query('kode_member');
+        $member = Member::with(['lokasi', 'kategori'])->where('kode_member', $kode_member)->first();
+        $mobilisasi = Mobilisasidetail::leftjoin('mobilisasi', 'mobilisasi.id_mobilisasi', 'mobilisasi_detail.id_mobilisasi')
+                    ->join('member', 'member.id', 'mobilisasi_detail.id_aset')
+                    ->where('mobilisasi_detail.id_aset', $member->id)
+                    ->leftjoin('table_lokasi', 'table_lokasi.id_lokasi', 'mobilisasi_detail.lokasi_tujuan')
+                    ->select('kode_mobilisasi', 'kode_kabin','nopol','nama_lokasi', 'mobilisasi_detail.user as user', 'mobilisasi_detail.tanggal_awal as tanggal_awal', 'mobilisasi_detail.tanggal_kembali as tanggal_kembali')
+                    ->get();
+        $service = Permintaan::leftjoin('table_lokasi', 'table_lokasi.id_lokasi', 'permintaan.id_lokasi')
+                    ->where('permintaan.kode_customer', $kode_member)
+                    ->get();
+
+
+        return view('detail.index', [
+            'member' => $member, 
+            'mobilisasi' => $mobilisasi,
+            'service' => $service
+        ]);
+    }
+
+    public function notaBesar()
+    {
+        $setting = Setting::first();
+        $member = Member::all();
+
+        $pdf = PDF::loadView('member.laporan_all', compact('setting', 'member'));
+        $pdf->setPaper(0,0,609,440, 'potrait');
+        return $pdf->stream('data_aset-'. date('Y-m-d-his') .'.pdf');
+    }
+
 }

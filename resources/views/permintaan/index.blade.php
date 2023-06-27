@@ -14,9 +14,6 @@
     <li role="presentation" class="active"> <a href="{{ route('permintaan.index') }}">
         <span>Permintaan Service</span>
     </a></li>
-    <li role="presentation"><a href="{{ route('pemeriksaan.index') }}">
-        <span>pemeriksaan Service</span>
-    </a></li>
     <li role="presentation"><a href="{{ route('service.index') }}">
         <span>Service On Progress</span>
     </a></li>
@@ -36,17 +33,16 @@
             <div class="box-body table-responsive">
                 <form action="" method="post" class="form-produk">
                     @csrf
-                    <table class="table table-stiped table-bordered">
+                    <table class="table table-stiped table-permintaan">
                         <thead>
-                            <th width="5%">
-                                <input type="checkbox" name="select_all" id="select_all">
-                            </th>
                             <th width="5%">No</th>
                             <th>Tanggal</th>
                             <th>Kode Permintaan</th>
                             <th>Kode Aset</th>
+                            <th>KM</th>
                             <th>Unit/Lokasi</th>
                             <th>User</th>
+                            <th>total harga</th>
                             <th>Keluhan</th>
                             <th>Mekanik</th>
                             <th>Status</th>
@@ -60,14 +56,15 @@
 </div>
 
 @includeIf('permintaan.form')
+@includeIf('permintaan.detail')
 @endsection
 
 @push('scripts')
 <script>
-    let table;
+    let table, table1;
 
     $(function () {
-        table = $('.table').DataTable({
+        table = $('.table-permintaan').DataTable({
             responsive: true,
             processing: true,
             serverSide: true,
@@ -76,13 +73,14 @@
                 url: '{{ route('permintaan.data') }}',
             },
             columns: [
-                {data: 'select_all', searchable: false, sortable: false},
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'tanggal'},
                 {data: 'kode_permintaan'},
                 {data: 'kode_kabin'},
+                {data: 'km'},
                 {data: 'nama_lokasi'},
                 {data: 'user'},
+                {data: 'total_harga'},
                 {data: 'Keluhan'},
                 {data: 'nama_petugas'},
                 {data: 'status'},
@@ -92,21 +90,9 @@
             
         });
 
-        
+       
 
-        $('#modal-form').validator().on('submit', function (e) {
-            if (! e.preventDefault()) {
-                $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
-                    .done((response) => {
-                        $('#modal-form').modal('hide');
-                        table.ajax.reload();
-                    })
-                    .fail((errors) => {
-                        alert('Tidak dapat menyimpan data');
-                        return;
-                    });
-            }
-        });
+        
 
         $('[name=select_all]').on('click', function () {
             $(':checkbox').prop('checked', this.checked);
@@ -114,7 +100,26 @@
     });
     
     
-    
+    table1 = $('.table-detail').DataTable({
+            order : [1, 'DESC'],
+            processing: true,
+            bsort: false,
+            dom: 'Brt',
+            columns: [
+                {data: 'kode_permintaan'},
+                {data: 'nama_barang'},
+                {data: 'jumlah'},
+                {data: 'biaya'},
+            ]
+        })
+
+
+    function showDetail(url) {
+            $('#modal-detail').modal('show');
+
+            table1.ajax.url(url);
+            table1.ajax.reload();
+        }
 
     function addForm(url) {
         $('#modal-form').modal('show');
@@ -137,11 +142,14 @@
 
         $.get(url)
             .done((response) => {
-                console.log(response);
                 $('#modal-form [name=tanggal]').val(response.tanggal);
                 $('#modal-form [name=kode_customer]').val(response.kode_customer);
                 $('#modal-form [name=Keluhan]').val(response.Keluhan);
+                $('#modal-form [name=km]').val(response.km);
+                $('#modal-form [name=user]').val(response.user);
+                $('#modal-form [name=id_lokasi]').val(response.id_lokasi);
                 $('#modal-form [name=id_mekanik]').val(response.id_mekanik);
+                $('.selectpicker').selectpicker('refresh')
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');
@@ -196,6 +204,34 @@
                 .attr('action', url)
                 .submit();
         }
+    }
+
+    const title = "Form Service"
+    function notaBesar(url, title) {
+        popupCenter(url, title, 900, 675);
+    }
+
+    function popupCenter(url, title, w, h) {
+        const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
+        const dualScreenTop  = window.screenTop  !==  undefined ? window.screenTop  : window.screenY;
+
+        const width  = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+        const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+        const systemZoom = width / window.screen.availWidth;
+        const left       = (width - w) / 2 / systemZoom + dualScreenLeft
+        const top        = (height - h) / 2 / systemZoom + dualScreenTop
+        const newWindow  = window.open(url, title, 
+        `
+            scrollbars=yes,
+            width  = ${w / systemZoom}, 
+            height = ${h / systemZoom}, 
+            top    = ${top}, 
+            left   = ${left}
+        `
+        );
+
+        if (window.focus) newWindow.focus();
     }
 
     

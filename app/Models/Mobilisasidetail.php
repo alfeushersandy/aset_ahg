@@ -27,4 +27,9 @@ class Mobilisasidetail extends Model
         return $this->hasOne(Lokasi::class, 'id_lokasi', 'lokasi_tujuan');
     }
 
+    public function mobilisasi()
+    {
+        return $this->hasMany(Mobilisasi::class, 'id_mobilisasi', 'id_mobilisasi');
+    }
+
 }

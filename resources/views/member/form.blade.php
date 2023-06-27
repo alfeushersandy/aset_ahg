@@ -37,16 +37,53 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="nama" id="label_nama_aset" class="col-lg-2 col-lg-offset-1 control-label">Kode kendaraan</label>
+                            <label for="merek" id="label_merek_aset" class="col-lg-2 col-lg-offset-1 control-label">Merk</label>
                             <div class="col-lg-6">
-                                <input type="text" name="nama" id="nama" class="form-control" required autofocus>
+                                <input type="text" name="merek" id="merek" class="form-control" required>
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="no_pol" id="label_kode_aset" class="col-lg-2 col-lg-offset-1 control-label">Kode Aset/No Polisi</label>
+                            <label for="nama" id="label_nama_aset" class="col-lg-2 col-lg-offset-1 control-label">Kode kendaraan/Kode Kabin</label>
                             <div class="col-lg-6">
-                                <input type="text" name="no_pol" id="no_pol" class="form-control" required autofocus>
+                                <input type="text" name="nama" id="nama" class="form-control" required autofocus>
+                                <span><b>*contoh : TP01, T.01, EX-01, dll</b></span>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="serial_number" id="label_serial_number" class="col-lg-2 col-lg-offset-1 control-label">No Seri/No Mesin</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="serial_number" id="serial_number" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="nopol" id="label_kode_aset" class="col-lg-2 col-lg-offset-1 control-label">Identitas/No Polisi</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="nopol" id="nopol" class="form-control" required>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="asuransi" id="label_kode_aset" class="col-lg-2 col-lg-offset-1 control-label">Asuransi</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="asuransi" id="asuransi" class="form-control">
+                                <span><b>*isi dengan nama Asuransi bila ada</b></span>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="tanggal_pembelian" id="label_tanggal_pembelian" class="col-lg-2 col-lg-offset-1 control-label">Tanggal Perolehan</label>
+                            <div class="col-lg-6">
+                                <input type="date" name="tanggal_pembelian" id="tanggal_pembelian" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="harga_perolehan" id="label_harga_perolehan" class="col-lg-2 col-lg-offset-1 control-label">Harga Perolehan</label>
+                            <div class="col-lg-6">
+                                <input type="number" name="harga_perolehan" id="harga_perolehan" class="form-control">
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
@@ -54,18 +91,6 @@
                             <label for="user" class="col-lg-2 col-lg-offset-1 control-label">User</label>
                             <div class="col-lg-6">
                                 <input type="text" name="user" id="user" class="form-control">
-                                <span class="help-block with-errors"></span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="id_lokasi" class="col-lg-2 col-lg-offset-1 control-label">Unit / Lokasi</label>
-                            <div class="col-lg-6">
-                                <select name="id_lokasi" id="id_lokasi" class="form-control">
-                                    <option value="">Pilih Unit/Lokasi</option>
-                                    @foreach ($lokasi as $key => $item)
-                                    <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
@@ -81,76 +106,7 @@
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
-                    </div>
-                    <!-- form untuk IT -->
-                        <div class="form-group it">
-                            <div class="form-group row">
-                                <label for="motherboard" id="label_motherboard_aset" class="col-lg-2 col-lg-offset-1 control-label">Motherboard</label>
-                                <div class="col-lg-6">
-                                    <input type="text" name="motherboard" id="motherboard" class="form-control" required>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="processor" id="label_processor_aset" class="col-lg-2 col-lg-offset-1 control-label">Processor</label>
-                                <div class="col-lg-6">
-                                    <input type="text" name="processor" id="processor" class="form-control" required>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="ram" id="label_ram_aset" class="col-lg-2 col-lg-offset-1 control-label">Ram</label>
-                                <div class="col-lg-6">
-                                    <input type="text" name="ram" id="ram" class="form-control" required>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="vga" id="label_vga_aset" class="col-lg-2 col-lg-offset-1 control-label">VGA</label>
-                                <div class="col-lg-6">
-                                    <input type="text" name="vga" id="vga" class="form-control" required>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="os" id="label_os_aset" class="col-lg-2 col-lg-offset-1 control-label">Operting System</label>
-                                <div class="col-lg-6">
-                                    <input type="text" name="os" id="os" class="form-control" required>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="keyboard" id="label_keyboard" class="col-lg-2 col-lg-offset-1 control-label">Keyboard</label>
-                                <div class="col-lg-6">
-                                    <select name="keyboard" id="keyboard" class="form-control" required>
-                                        <option value="1">Ada/Bisa</option>
-                                        <option value="0">Tidak ada/rusak</option>
-                                    </select>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="mouse" id="label_mouse" class="col-lg-2 col-lg-offset-1 control-label">Mouse</label>
-                                <div class="col-lg-6">
-                                    <select name="mouse" id="mouse" class="form-control" required>
-                                        <option value="1">Ada/Bisa</option>
-                                        <option value="0">Tidak ada/rusak</option>
-                                    </select>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="network" id="label_network" class="col-lg-2 col-lg-offset-1 control-label">Network</label>
-                                <div class="col-lg-6">
-                                    <select name="network" id="network" class="form-control" required>
-                                        <option value="1">Ada/Bisa</option>
-                                        <option value="0">Tidak ada/rusak</option>
-                                    </select>
-                                    <span class="help-block with-errors"></span>
-                                </div>
-                            </div>
-                        </div>
-                   
+                    </div>                   
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Simpan</button>

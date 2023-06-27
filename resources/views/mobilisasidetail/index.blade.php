@@ -141,7 +141,7 @@
                 {data: 'user'},
                 {data: 'tanggal_awal'},
                 {data: 'tanggal_akhir'},
-                {data: 'aksi', searchable: false, sortable: false},
+                {data: 'aksi'},
             ],
             dom: 'Brt',
             bSort: false,
@@ -164,7 +164,7 @@
                 {data: 'kode_kabin'},
                 {data: 'nopol'},
                 {data: 'lokasi'},
-                {data: 'aksi', searchable: false, sortable: false},
+                {data: 'aksi'},
             ]
         })
 

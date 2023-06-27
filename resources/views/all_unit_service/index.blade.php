@@ -17,7 +17,59 @@
     <li role="presentation" class="active"><a href="{{ route('service.allArmada') }}">
         <span>Total seluruh item</span>
     </a></li>
+    <li role="presentation"><a href="{{ route('service.detail') }}">
+        <span>History Per Sparepart</span>
+    </a></li>
 </ul>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box">
+            <div class="box-body">
+                <form action="" class="form-kode-kendaraan">
+                    @csrf
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                      <div class="form-group">
+                                          <label for="tanggal_awal">Tanggal Awal</label>
+                                          <input type="date" class="form-control datepicker" name="tanggal_awal" id="tanggal_awal">
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="tanggal_awal">Tanggal Akhir</label>
+                                          <input type="date" class="form-control datepicker" name="tanggal_akhir" id="tanggal_akhir">
+                                      </div>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info btn-flat" type="button" id="cari" style="margin-top: 20px; margin-left: 20px">Cari</button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button  class="btn btn-danger btn-flat" type="button" onclick="notaAll('Laporan Service detail')" id="cari">Cetak PDF</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button  class="btn btn-danger btn-flat" type="button" onclick="notaBesar('Laporan Service')" id="cari">Cetak Rekap PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <h1 class="total">Total : Rp. {{format_uang($detail)}}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-lg-12">
         <div class="box">
@@ -25,8 +77,10 @@
                 <table class="table table-stiped table-bordered table-penjualan">
                     <thead>
                         <th>No</th>
-                        <th>Unit Aset</th>
-                        <th>Total Item</th>
+                        <th>Tanggal</th>
+                        <th>Kode Aset</th>
+                        <th>Nama Barang</th>
+                        <th>jumlah</th>
                         <th>Total Biaya</th>
                     </thead>
                 </table>
@@ -55,7 +109,9 @@
                 },
                 columns: [
                     {data: 'DT_RowIndex', searchable: false, sortable: false},
+                    {data: 'tanggal', searchable: false, sortable: false},
                     {data: 'kode_member'},
+                    {data: 'nama_barang'},
                     {data: 'jumlah'},
                     {data: 'biaya'},
                 ],
@@ -63,10 +119,24 @@
         });
         
     $("#cari").on("click", function (event) {
-        let id = $('#kode_kendaraan').val();
-        table.ajax.url("data/"+id);
+        event.preventDefault();
+        let tanggal_awal = $('#tanggal_awal').val()
+        let tanggal_akhir = $('#tanggal_akhir').val()
+        getTotal(tanggal_awal, tanggal_akhir);
+        table.ajax.url("/all_history/"+ tanggal_awal + '/' + tanggal_akhir);
         table.ajax.reload();
-        });
+    });
+
+    function getTotal(tanggal_awal, tanggal_akhir){
+        $.ajax({
+            url: '/total/'+tanggal_awal+'/'+tanggal_akhir,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res){
+                $('.total').text("Total : Rp. " + res);
+            }
+        })
+    }
 
     function showDetail(url) {
         $('#modal-detail').modal('show');
@@ -94,8 +164,16 @@
     }
 
     function notaBesar(title) {
-        let id = $('#kode_kendaraan').val();
-        let url = "/service/laporan/"+id;
+        let tanggal_awal = $('#tanggal_awal').val();
+        let tanggal_akhir = $('#tanggal_akhir').val();
+        let url = "/rekap/"+tanggal_awal+'/'+tanggal_akhir;
+        popupCenter(url, title, 900, 675);
+    }
+
+    function notaAll(title) {
+        let tanggal_awal = $('#tanggal_awal').val();
+        let tanggal_akhir = $('#tanggal_akhir').val();
+        let url = "/laporan/"+tanggal_awal+'/'+tanggal_akhir;
         popupCenter(url, title, 900, 675);
     }
 

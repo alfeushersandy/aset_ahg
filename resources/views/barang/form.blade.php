@@ -11,52 +11,73 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="nama_barang" class="col-lg-2 col-lg-offset-1 control-label">Nama</label>
-                        <div class="col-lg-6">
-                            <input type="text" name="nama_barang" id="nama_barang" class="form-control" required autofocus>
-                            <span class="help-block with-errors"></span>
+                    <div class="form-section">
+                        <div class="form-group row">
+                            <label for="nama_barang" class="col-lg-2 col-lg-offset-1 control-label">Nama</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="nama_barang" id="nama_barang" class="form-control" required autofocus>
+                                <span class="help-block with-errors"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="id_kategori" class="col-lg-2 col-lg-offset-1 control-label">Kategori</label>
-                        <div class="col-lg-6">
-                            <select name="id_kategori" id="id_kategori" class="form-control" required>
-                                <option value="">Pilih Kategori</option>
-                                @foreach ($kategori as $key => $item)
-                                <option value="{{ $key }}">{{ $item }}</option>
-                                @endforeach
-                            </select>
-                            <span class="help-block with-errors"></span>
+                        <div class="form-group row">
+                            <label for="id_kategori" class="col-lg-2 col-lg-offset-1 control-label">Kategori</label>
+                            <div class="col-lg-6">
+                                <select name="id_kategori" id="id_kategori" class="form-control" required>
+                                    <option value="">Pilih Kategori</option>
+                                    @foreach ($kategori as $key => $item)
+                                    <option value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="help-block with-errors"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="merk" class="col-lg-2 col-lg-offset-1 control-label">Merk</label>
-                        <div class="col-lg-6">
-                            <input type="text" name="merk" id="merk" class="form-control">
-                            <span class="help-block with-errors"></span>
+                        <div class="form-group row">
+                            <label for="satuan" class="col-lg-2 col-lg-offset-1 control-label">Satuan</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="satuan" id="satuan" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="harga" class="col-lg-2 col-lg-offset-1 control-label">Harga</label>
-                        <div class="col-lg-6">
-                            <input type="number" name="harga" id="harga" class="form-control" required value="0">
-                            <span class="help-block with-errors"></span>
+                        <div class="form-group row">
+                            <label for="kelompok" class="col-lg-2 col-lg-offset-1 control-label">Kelompok</label>
+                            <div class="col-lg-6">
+                                <select name="kelompok" id="kelompok" class="form-control">
+                                    <option value="">Pilih Kelompok</option>
+                                    <option value="Common Use Part">Common Use Part</option>
+                                    <option value="Part Standart Kelompok Aset">Part Standart Kelompok Aset</option>
+                                    <option value="Part Khusus">Part Khusus</option>
+                                </select>
+                                <span class="help-block with-errors"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="stok" class="col-lg-2 col-lg-offset-1 control-label">Stok</label>
-                        <div class="col-lg-6">
-                            <input type="number" name="stok" id="stok" class="form-control" required value="0">
-                            <span class="help-block with-errors"></span>
+                        <div class="form-group row">
+                            <label for="merk" class="col-lg-2 col-lg-offset-1 control-label">Merk</label>
+                            <div class="col-lg-6">
+                                <input type="text" name="merk" id="merk" class="form-control">
+                                <span class="help-block with-errors"></span>
+                            </div>
                         </div>
-                    </div>
+                        <div class="form-group row">
+                            <label for="harga" class="col-lg-2 col-lg-offset-1 control-label">Harga</label>
+                            <div class="col-lg-6">
+                                <input type="number" name="harga" id="harga" class="form-control" required value="0">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="stok" class="col-lg-2 col-lg-offset-1 control-label">Stok</label>
+                            <div class="col-lg-6">
+                                <input type="number" name="stok" id="stok" class="form-control" required value="0">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
+            </form>
                 <div class="modal-footer">
-                    <button class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i> Simpan</button>
+                    <button id="tombol_simpan" type="button" class="btn btn-sm btn-flat btn-primary"><i class="fa fa-save"></i>Simpan</button>
                     <button type="button" class="btn btn-sm btn-flat btn-warning" data-dismiss="modal"><i class="fa fa-arrow-circle-left"></i> Batal</button>
                 </div>
             </div>
-        </form>
     </div>
 </div>

@@ -18,18 +18,7 @@ class UserController extends Controller
 
     public function data()
     {
-        if(Auth::user()->level == 1){
-            $user = User::leftjoin('departemen', function($join){
-                $join->on('departemen.id_departemen', '=', 'users.id_departemen');
-            })
-            ->orderBy('id', 'desc')->get();
-        }else{
-            $user = User::where('users.id_departemen', Auth::user()->id_departemen)
-            ->leftjoin('departemen', function($join){
-                $join->on('departemen.id_departemen', '=', 'users.id_departemen');
-            })
-            ->orderBy('id', 'desc')->get();
-        }
+        $user = User::orderBy('id', 'desc')->get();
         
         return datatables()
             ->of($user)
@@ -72,7 +61,6 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->level = 2;
-        $user->id_departemen = $request->departemen;
         $user->foto = '/img/user.jpg';
         
         $user->save();
@@ -116,7 +104,6 @@ class UserController extends Controller
         $user = User::find($id);
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->id_departemen = $request->departemen;
         if ($request->has('password') && $request->password != "") 
             $user->password = bcrypt($request->password);
         $user->update();

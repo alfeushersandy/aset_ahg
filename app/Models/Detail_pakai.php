@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Detail_pakai extends Model
+{
+    use HasFactory;
+    protected $table = 'detail_pakai';
+    protected $primaryKey = 'id_detail_pakai';
+
+    public function permintaan()
+    {
+        return $this->hasMany(Permintaan::class, 'id', 'id_permintaan');
+    }
+
+    public function ban()
+    {
+        return $this->hasOne(Ban::class, 'id_detail_barang', 'id_detail_barang');
+    }
+
+    public function member()
+    {
+        return $this->hasMany(Member::class, 'id', 'id_aset');
+    }
+}

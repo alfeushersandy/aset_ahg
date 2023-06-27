@@ -12,9 +12,9 @@
             font-size: 14px;
         }
         table.data td,
-        table.data th {
-            border: 1px solid #ccc;
-            padding: 5px;
+        th {
+            border: 1px solid rgb(0, 0, 0);
+            padding: 10px;
         }
         table.data {
             border-collapse: collapse;
@@ -25,27 +25,39 @@
         .text-right {
             text-align: right;
         }
+        .border {
+            border: 1px solid rgb(0, 0, 0);
+        }
     </style>
 </head>
 <body>
+    <div class="border">
+        <table class="table header" width="100%">
+            <thead>
+                <tr>
+                    <th>PT. ARMADA HADA GRAHA</th>
+                    <th>KENDARAAN & PERALATAN</th>
+                    <th>{{$permintaan->kode_permintaan}}</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <h1 class="text-center">Nota Sparepart</h1>
     <table width="100%">
         <tr>
-            <td rowspan="4" width="60%">
-                <img src="{{ public_path($setting->path_logo) }}" alt="{{ $setting->path_logo }}" width="120">
-                <br>
-                {{ $setting->alamat }}
-                <br>
-                <br>
-            </td>
             <td>Tanggal</td>
             <td>: {{ tanggal_indonesia(date('Y-m-d')) }}</td>
         </tr>
         <tr>
-            <td>Kode Member</td>
+            <td>Kode Aset</td>
             <td>: {{ $permintaan->member->kode_kabin ?? '' }}</td>
         </tr>
+        <tr>
+            <td>Kode Permintaan</td>
+            <td>: {{ $permintaan->kode_permintaan ?? '' }}</td>
+        </tr>
     </table>
-
+    <br>
     <table class="data" width="100%">
         <thead>
             <tr>
@@ -61,8 +73,8 @@
             @foreach ($detail as $key => $item)
                 <tr>
                     <td class="text-center">{{ $key+1 }}</td>
-                    <td>{{ $item->barang->nama_barang }}</td>
                     <td>{{ $item->barang->kode_barang }}</td>
+                    <td>{{ $item->barang->nama_barang }}</td>
                     <td class="text-right">{{ format_uang($item->biaya) }}</td>
                     <td class="text-right">{{ format_uang($item->jumlah) }}</td>
                     <td class="text-right">{{ format_uang($item->subtotal) }}</td>
@@ -76,17 +88,32 @@
             </tr>
         </tfoot>
     </table>
-
+    <br>
     <table width="100%">
         <tr>
-            <td><b>Terimakasih telah berbelanja dan sampai jumpa</b></td>
             <td class="text-center">
-                Kasir
+                Logistik
                 <br>
                 <br>
                 <br>
                 <br>
                 {{ auth()->user()->name }}
+            </td>
+            <td class="text-center">
+                Mekanik
+                <br>
+                <br>
+                <br>
+                <br>
+                {{ $permintaan->mekanik->nama_petugas }}
+            </td>
+            <td class="text-center">
+                Mengetahui
+                <br>
+                <br>
+                <br>
+                <br>
+                Muchamad Faqih
             </td>
         </tr>
     </table>

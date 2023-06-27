@@ -32,8 +32,7 @@
                 @if ($count > 0)
                     <span class="label label-danger mr-5">{{ $count }}</span>
                 @endif
-                </button>
-                
+                </button>    
             </div>
             <div class="box-body table-responsive">
                 <table class="table table-stiped table-bordered table-pembelian">

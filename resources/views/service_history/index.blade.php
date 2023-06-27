@@ -17,6 +17,9 @@
     <li role="presentation"><a href="{{ route('service.allArmada') }}">
         <span>Total seluruh item</span>
     </a></li>
+    <li role="presentation"><a href="{{ route('service.detail') }}">
+        <span>History Per Sparepart</span>
+    </a></li>
 </ul>
 <div class="row">
     <div class="col-lg-12">
@@ -33,9 +36,17 @@
                                 <div class="input-group">
                                     <select class="form-control" id="kode_kendaraan" name="kode_kendaraan">
                                         @foreach ($member as $member)
-                                            <option value="{{ $member->kode_member }}">{{ $member->kode_kabin }}</option>
+                                            <option value="{{ $member->kode_member }}">{{ $member->kode_kabin }} || {{$member->nopol}}</option>
                                         @endforeach
                                       </select>
+                                      <div class="form-group">
+                                          <label for="tanggal_awal">Tanggal Awal</label>
+                                          <input type="date" class="form-control datepicker" name="tanggal_awal" id="tanggal_awal">
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="tanggal_awal">Tanggal Akhir</label>
+                                          <input type="date" class="form-control datepicker" name="tanggal_akhir" id="tanggal_akhir">
+                                      </div>
                                     <span class="input-group-btn">
                                         <button class="btn btn-info btn-flat" type="button" id="cari">Cari</button>
                                     </span>
@@ -98,8 +109,16 @@
         
     $("#cari").on("click", function (event) {
         let id = $('#kode_kendaraan').val();
-        table.ajax.url("data/"+id);
-        table.ajax.reload();
+        let tanggal_awal = $('#tanggal_awal').val();
+        let tanggal_akhir = $('#tanggal_akhir').val();
+        if(!tanggal_awal || !tanggal_akhir){
+            alert('tanggal awal dan tanggal akhir periode harus diisi');
+        }else if(tanggal_akhir < tanggal_awal){
+            alert('tanggal awal tidak boleh lebih besar dari tanggal akhir');
+        }else{
+            table.ajax.url("data/"+id + '/' + tanggal_awal + '/' + tanggal_akhir);
+            table.ajax.reload();
+        }
         });
 
     function showDetail(url) {
@@ -129,7 +148,9 @@
 
     function notaBesar(title) {
         let id = $('#kode_kendaraan').val();
-        let url = "/service/laporan/"+id;
+        let tanggal_awal = $('#tanggal_awal').val();
+        let tanggal_akhir = $('#tanggal_akhir').val();
+        let url = "/service/laporan/"+id+'/'+tanggal_awal+'/'+tanggal_akhir;
         popupCenter(url, title, 900, 675);
     }
 

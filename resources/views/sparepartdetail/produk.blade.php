@@ -26,7 +26,7 @@
                                 <td>{{ $item->stok }}</td>
                                 <td>
                                     <a href="#" class="btn btn-primary btn-xs btn-flat"
-                                        onclick="pilihProduk('{{ $item->id_barang}}', '{{ $item->kode_barang}}')">
+                                        onclick="tampilForm('{{ $item->id_barang}}', '{{ $item->kode_barang}}', {{$item->harga}}, {{$item->id_kategori}}, '{{$item->nama_barang}}', {{$item->stok}})">
                                         <i class="fa fa-check-circle"></i>
                                         Pilih
                                     </a>

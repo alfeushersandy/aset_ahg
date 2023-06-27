@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Pilih sparepart</h4>
+                <h4 class="modal-title">Pilih Permintaan Service</h4>
             </div>
             <div class="modal-body">
                 <table class="table table-striped table-bordered table-sparepart">
@@ -22,7 +22,7 @@
                         @foreach ($sparepart as $key => $item)
                             <tr>
                                 <td width="5%">{{ $key+1 }}</td>
-                                <td>{{ $item->tanggal }}</td>
+                                <td>{{ date("d-m-Y", strtotime($item->tanggal)) }}</td>
                                 <td>{{ $item->kode_permintaan }}</td>
                                 <td>{{ $item->kode_kabin }}</td>
                                 <td>{{ $item->Keluhan }}</td>

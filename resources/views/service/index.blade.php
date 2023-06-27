@@ -10,25 +10,36 @@
 @endsection
 
 @section('content')
+@if (Auth::user()->level == 4)
 <ul class="nav nav-tabs">
-    <li role="presentation" > <a href="{{ route('permintaan.index') }}">
-        <span>Permintaan Service</span>
-    </a></li>
-    <li role="presentation"><a href="{{ route('pemeriksaan.index') }}">
-        <span>pemeriksaan Service</span>
-    </a></li>
     <li role="presentation" class="active"><a href="{{ route('service.index') }}">
         <span>Service On Progress</span>
     </a></li>
-    <li role="presentation"><a href="{{ route('service.selesai') }}">
-        <span>Service Selesai</span>
-    </a></li>
 </ul>
+@else
+    <ul class="nav nav-tabs">
+        <li role="presentation" > <a href="{{ route('permintaan.index') }}">
+            <span>Permintaan Service</span>
+        </a></li>
+        <li role="presentation" class="active"><a href="{{ route('service.index') }}">
+            <span>Service On Progress</span>
+        </a></li>
+        <li role="presentation"><a href="{{ route('service.selesai') }}">
+            <span>Service Selesai</span>
+        </a></li>
+    </ul>
+@endif
 <div class="row">
     <div class="col-lg-12">
         <div class="box">
             <div class="box-header with-border">
-                <button onclick="addForm()" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> List Service </button>
+                @if (Auth::user()->level !== 4)
+                <button onclick="addForm()" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> List Service 
+                    @if ($count > 0)
+                        <span class="label label-danger mr-5">{{ $count }}</span>
+                    @endif
+                </button>  
+                @endif
                 <button onclick="addFormsparepart()" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Permintaan Sparepart </button>
             </div>
             <div class="box-body table-responsive">

@@ -1,18 +1,13 @@
 <?php
 
 use App\Http\Controllers\{
+    BanController,
     DashboardController,
     KategoriController,
     LaporanController,
-    ProdukController,
     MemberController,
-    PengeluaranController,
-    PembelianController,
-    PembelianDetailController,
     PenjualanController,
-    PenjualanDetailController,
     SettingController,
-    SupplierController,
     UserController,
     MekanikController,
     PermintaanController,
@@ -22,12 +17,19 @@ use App\Http\Controllers\{
     SparepartdetailController,
     LokasiController,
     BarangController,
+    BarangdatangController,
     PermintaandetailController,
     DepartemenController,
     GudangController,
+    KembaliController,
     MobilisasiController,
     MobilisasidetailController,
+    PenerimaanDetailController,
+    PerencanaanController,
+    PerencanaanDetailController,
+    PermintaanBarangController,
 };
+use App\Models\Perencanaan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,7 +50,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::group(['middleware' => 'level:1,2'], function () {
+    Route::group(['middleware' => 'level:1,2,3'], function () {
         Route::get('/departemen/data', [DepartemenController::class, 'data'])->name('departemen.data');
         Route::resource('/departemen', DepartemenController::class);
 
@@ -58,80 +60,120 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/lokasi/data', [LokasiController::class, 'data'])->name('lokasi.data');
         Route::resource('/lokasi', LokasiController::class);
 
-        Route::get('/produk/data', [ProdukController::class, 'data'])->name('produk.data');
-        Route::post('/produk/delete-selected', [ProdukController::class, 'deleteSelected'])->name('produk.delete_selected');
-        Route::post('/produk/cetak-barcode', [ProdukController::class, 'cetakBarcode'])->name('produk.cetak_barcode');
-        Route::resource('/produk', ProdukController::class);
-
-        Route::get('/barang/data', [BarangController::class, 'data'])->name('barang.data');
-        Route::post('/barang/delete-selected', [BarangController::class, 'deleteSelected'])->name('barang.delete_selected');
-        Route::post('/barang/cetak-barcode', [BarangController::class, 'cetakBarcode'])->name('barang.cetak_barcode');
-        Route::resource('/barang', BarangController::class);
-
         Route::get('/member/data', [MemberController::class, 'data'])->name('member.data');
         Route::get('/member/getcategory/{id}', [MemberController::class, 'getcategory'])->name('member.getcategory');
         Route::post('/member/cetak-member', [MemberController::class, 'cetakMember'])->name('member.cetak_member');
+        Route::get('/member/{id_lokasi}/detail', [MemberController::class, 'memberByLokasi'])->name('member.bylokasi');
+        Route::get('/member/{id_kategori}/kategori', [MemberController::class, 'memberByKategori'])->name('member.bykategori');
+        Route::get('/member/{id_lokasi}/cetak', [MemberController::class, 'cetakByLokasi'])->name('member.cetak_lokasi');
+        Route::get('/member/{id_kategori}/cetak_kategori', [MemberController::class, 'cetakByKategori'])->name('member.cetak_kategori');
+        Route::get('/member/nota', [MemberController::class, 'notaBesar'])->name('member.nota_besar');
+        Route::get('/member/detail', [MemberController::class, 'detail'])->name('member.detail');
+        
         Route::resource('/member', MemberController::class);
 
         Route::get('/mekanik/data', [MekanikController::class, 'data'])->name('mekanik.data');
         Route::resource('/mekanik', MekanikController::class);
 
-        Route::get('/supplier/data', [SupplierController::class, 'data'])->name('supplier.data');
-        Route::resource('/supplier', SupplierController::class);
-
-        Route::get('/pengeluaran/data', [PengeluaranController::class, 'data'])->name('pengeluaran.data');
-        Route::resource('/pengeluaran', PengeluaranController::class);
-
-        Route::get('/pembelian/data', [PembelianController::class, 'data'])->name('pembelian.data');
-        Route::get('/pembelian/{id}/create', [PembelianController::class, 'create'])->name('pembelian.create');
-        Route::resource('/pembelian', PembelianController::class)
-            ->except('create');
-
-        Route::get('/pembelian_detail/{id}/data', [PembelianDetailController::class, 'data'])->name('pembelian_detail.data');
-        Route::get('/pembelian_detail/loadform/{diskon}/{total}', [PembelianDetailController::class, 'loadForm'])->name('pembelian_detail.load_form');
-        Route::resource('/pembelian_detail', PembelianDetailController::class)
-            ->except('create', 'show', 'edit');
-
-        Route::get('/penjualan/data', [PenjualanController::class, 'data'])->name('penjualan.data');
-        Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
-        Route::get('/penjualan/{id}', [PenjualanController::class, 'show'])->name('penjualan.show');
-        Route::delete('/penjualan/{id}', [PenjualanController::class, 'destroy'])->name('penjualan.destroy');
     });
 
-    Route::group(['middleware' => 'level:1,2,3'], function () {
-        Route::get('/transaksi/baru', [PenjualanController::class, 'create'])->name('transaksi.baru');
-        Route::post('/transaksi/simpan', [PenjualanController::class, 'store'])->name('transaksi.simpan');
-        Route::get('/transaksi/selesai', [PenjualanController::class, 'selesai'])->name('transaksi.selesai');
-        Route::get('/transaksi/nota-kecil', [PenjualanController::class, 'notaKecil'])->name('transaksi.nota_kecil');
-        Route::get('/transaksi/nota-besar', [PenjualanController::class, 'notaBesar'])->name('transaksi.nota_besar');
+    
 
-        Route::get('/transaksi/{id}/data', [PenjualanDetailController::class, 'data'])->name('transaksi.data');
-        Route::get('/transaksi/loadform/{diskon}/{total}/{diterima}', [PenjualanDetailController::class, 'loadForm'])->name('transaksi.load_form');
-        Route::resource('/transaksi', PenjualanDetailController::class)
-            ->except('create', 'show', 'edit');
+    Route::group(['middleware' => 'level:1,2,3'], function () {
 
         Route::get('/permintaan/data', [PermintaanController::class, 'data'])->name('permintaan.data');
         Route::post('/permintaan/create', [PermintaanController::class, 'create'])->name('permintaan.create');
-        Route::get('/permintaan/{id}/sparepart', [PermintaanController::class, 'sparepart'])->name('permintaan.sparepart');
-        Route::get('/permintaan/selesai', [PermintaanController::class, 'selesai'])->name('permintaan.selesai');
-        Route::get('/permintaan/nota', [PermintaanController::class, 'notaBesar'])->name('permintaan.nota_besar');
+        Route::get('/permintaan/selesai/{id}', [PermintaanController::class, 'selesai'])->name('permintaan.selesai');
+        Route::get('/permintaan/nota/{id}', [PermintaanController::class, 'notaBesar'])->name('permintaan.nota_besar');
+        Route::get('/permintaan/detail/{id_permintaan}', [PermintaanController::class, 'detail'])->name('permintaan.detail');
+        Route::get('/permintaan/form_selesai', [PermintaanController::class, 'selesai_form'])->name('permintaan.selesai_form');
+        Route::get('/permintaan/form_cetak', [PermintaanController::class, 'formService'])->name('permintaan.cetak_form');
+        Route::get('/permintaan/{id_permintaan}/form', [PermintaanController::class, 'formCetakService'])->name('permintaan.form_service');
         Route::resource('/permintaan', PermintaanController::class)
             ->except('create');
+
+        Route::get('/perencanaan', [PerencanaanController::class, 'index'])->name('perencanaan.index');
+        Route::post('/perencanaan/create', [PerencanaanController::class, 'create'])->name('perencanaan.create');
+        Route::post('/perencanaan/store', [PerencanaanController::class, 'store'])->name('perencanaan.store');
+        Route::get('/perencanaan/selesai', [PerencanaanController::class, 'selesai'])->name('perencanaan.selesai');
+        Route::get('/perencanaan/nota', [PerencanaanController::class, 'notaBesar'])->name('perencanaan.nota_besar');
+        Route::get('/perencanaan/laporan', [PerencanaanController::class, 'laporan'])->name('perencanaan.laporan');
+        Route::get('/perencanaan/data/{id}/{tanggal_awal}/{tanggal_akhir}', [PerencanaanController::class, 'Getdata'])->name('perencanaan.getData');
+        Route::get('/perencanaan/cetak/{id}/{tanggal_awal}/{tanggal_akhir}', [PerencanaanController::class, 'cetak_laporan'])->name('perencanaan.cetak_laporan');
+        Route::get('/perencanaan/all', [PerencanaanController::class, 'allRencana'])->name('perencanaan.allRencana');
+        Route::get('/perencanaan/data/allunit', [PerencanaanController::class, 'allUnit'])->name('perencanaan.allUnit');
+        Route::get('/perencanaan/total/{tanggal_awal}/{tanggal_akhir}', [PerencanaanController::class, 'getTotal'])->name('perencanaan.getTotal');
+        Route::get('/perencanaan/rekap/{tanggal_awal}/{tanggal_akhir}', [PerencanaanController::class, 'laporanRekap'])->name('perencanaan.laporanRekap');
+        Route::get('/perencanaan/laporan/{tanggal_awal}/{tanggal_akhir}', [PerencanaanController::class, 'laporanAllUnit'])->name('perencanaan.laporanAllUnit');
+        Route::get('/perencanaan/{tanggal_awal}/{tanggal_akhir}', [PerencanaanController::class, 'getAll'])->name('perencanaan.getAll');
+
+        Route::get('/perencanaan/detail', [PerencanaanDetailController::class, 'index'])->name('perencanaan_detail.index');
+        Route::post('/perencanaan/detail/store', [PerencanaanDetailController::class, 'store'])->name('perencanaan_detail.store');
+        Route::get('/detail/{id}/data', [PerencanaanDetailController::class, 'data'])->name('perencanaan_detail.data');
+        Route::delete('/perencanaan/{id}/delete', [PerencanaanDetailController::class, 'destroy'])->name('perencanaan_detail.destroy');
+
+        Route::get('/perencanaan/barang', [PermintaanBarangController::class, 'index'])->name('permintaan_barang.index');
+
+
+        Route::get('/penerimaan', [BarangdatangController::class, 'index'])->name('penerimaan.index');
+        Route::post('/penerimaan/create', [BarangdatangController::class, 'create'])->name('penerimaan.create');
+        Route::post('/penerimaan/simpan', [BarangdatangController::class, 'simpan'])->name('penerimaan.simpan');
+        Route::get('/penerimaan/data', [BarangdatangController::class, 'data'])->name('penerimaan.data');
+        Route::get('/penerimaan/edit/{id}', [BarangdatangController::class, 'edit'])->name('penerimaan.edit');
+        Route::get('/penerimaan/show', [BarangdatangController::class, 'show'])->name('penerimaan.show');
+        Route::get('/penerimaan/data-update/{id}', [BarangdatangController::class, 'data_Update'])->name('penerimaan.data_Update');
+        Route::post('/penerimaan/update_form', [BarangdatangController::class, 'update_form'])->name('penerimaan.update_form');
+        Route::get('/penerimaan/laporan', [BarangdatangController::class, 'laporan'])->name('penerimaan.laporan');
+        Route::get('/penerimaan/data/{id}/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'Getdata'])->name('penerimaan.getData');
+        Route::get('/penerimaan/cetak/{id}/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'cetak_laporan'])->name('penerimaan.cetak_laporan');
+        Route::get('/penerimaan/all', [BarangdatangController::class, 'allRencana'])->name('penerimaan.allRencana');
+        Route::get('/penerimaan/data/allunit', [BarangdatangController::class, 'allUnit'])->name('penerimaan.allUnit');
+        Route::get('/penerimaan/total/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'getTotal'])->name('penerimaan.getTotal');
+        Route::get('/penerimaan/rekap/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'laporanRekap'])->name('penerimaan.laporanRekap');
+        Route::get('/penerimaan/laporan/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'laporanAllUnit'])->name('penerimaan.laporanAllUnit');
+        Route::get('/penerimaan/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'getAll'])->name('penerimaan.getAll');
+
+        Route::get('/penerimaandetail', [PenerimaanDetailController::class, 'index'])->name('penerimaan_detail.index');
+        Route::post('/penerimaandetail/store', [PenerimaanDetailController::class, 'store'])->name('penerimaan_detail.store');
+        Route::get('/penerimaandetail/{id}/data', [PenerimaanDetailController::class, 'data'])->name('penerimaan_detail.data');
+        Route::delete('/penerimaandetail/{id}/delete', [PenerimaanDetailController::class, 'data_destroy'])->name('penerimaan_detail.data_destroy');
+        Route::post('/penerimaandetail/update', [PenerimaanDetailController::class, 'update'])->name('penerimaan_detail.update');
+        Route::post('/penerimaandetail/ban', [PenerimaanDetailController::class, 'banStore'])->name('penerimaan_detail.ban');
 
         Route::get('/mobilisasi/data', [MobilisasiController::class, 'data'])->name('mobilisasi.data');
         Route::post('/mobilisasi/create', [MobilisasiController::class, 'create'])->name('mobilisasi.create');
         Route::get('/mobilisasi/selesai', [MobilisasiController::class, 'selesai'])->name('mobilisasi.selesai');
         Route::get('/mobilisasi/nota', [MobilisasiController::class, 'notaBesar'])->name('mobilisasi.nota_besar');
-        Route::resource('/mobilisasi', MobilisasiController::class);
+        Route::get('/mobilisasi/report', [MobilisasiController::class, 'report'])->name('mobilisasi.report');
+        Route::get('/report/getall', [MobilisasiController::class, 'getAll'])->name('mobilisasi.getAll');
+        Route::get('/report/data/{id_lokasi}/{tanggal_awal}/{tanggal_akhir}', [MobilisasiController::class, 'reportData'])->name('mobilisasi.reportData');
+        Route::get('/report/cetak/{id_lokasi}/{tanggal_awal}/{tanggal_akhir}', [MobilisasiController::class, 'laporan'])->name('mobilisasi.laporan');
+        Route::get('/mobilisasi/detail/{id_mobilisasi}', [MobilisasiController::class, 'detail'])->name('mobilisasi.detail');
+        Route::resource('/mobilisasi', MobilisasiController::class)
+            ->except('create');
 
         Route::get('/mobilisasidetail/{id}/data', [MobilisasidetailController::class, 'data'])->name('mobilisasidetail.data');
         Route::get('/mobilisasidetail/aset', [MobilisasidetailController::class, 'aset'])->name('mobilisasidetail.aset');
-        Route::resource('/mobilisasidetail', MobilisasidetailController::class);
+        Route::resource('/mobilisasidetail', MobilisasidetailController::class)
+            ->except('destroy');
+
+        Route::controller(KembaliController::class)->group(function(){
+            Route::get('/kembali', 'index')->name('kembali.index');
+            Route::get('/kembali/data', 'data')->name('kembali.data');
+            Route::get('/kembali/kembali/{detail}', 'kembali')->name('kembali.kembali');
+            Route::delete('/kembali/{id}/destroy', 'destroy')->name('kembali.destroy');
+        });
 
         Route::get('/gudang/keluar', [GudangController::class, 'index'])->name('gudang.index');
+        Route::get('/gudang/kodeservice', [GudangController::class, 'getKodeService'])->name('gudang.service');
+        Route::get('/gudang/create', [GudangController::class, 'create'])->name('gudang.create');
 
         Route::get('/permintaandetail/{id}/data', [PermintaandetailController::class, 'data'])->name('permintaandetail.data');
-        Route::resource('/permintaandetail', PermintaandetailController::class);
+        Route::get('/permintaandetail/{id}/detail', [PermintaandetailController::class, 'getDetail'])->name('permintaandetail.getDetail');
+        Route::post('/permintaandetail/simpan', [PermintaandetailController::class, 'simpanBan'])->name('permintaandetail.simpanBan');
+        Route::resource('/permintaandetail', PermintaandetailController::class)
+            ->except('index', 'show');
+        Route::get('permintaandetail/{id}', [PermintaandetailController::class, 'index'])->name('permintaandetail.index');
 
         Route::get('/pemeriksaan/data', [PemeriksaanController::class, 'data'])->name('pemeriksaan.data');
         Route::get('/pemeriksaan/{id}/create', [PemeriksaanController::class, 'create'])->name('pemeriksaan.create');
@@ -145,26 +187,29 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/service/history', [ServiceController::class, 'histori'])->name('service.history');
         Route::get('/service/history_all', [ServiceController::class, 'allArmada'])->name('service.allArmada');
         Route::get('/service/data/allunit', [ServiceController::class, 'allUnit'])->name('service.allUnit');
-        Route::get('/service/laporan/{id}', [ServiceController::class, 'laporan'])->name('service.laporan');
-        Route::get('/service/allUnit', [ServiceController::class, 'allUnit'])->name('service.allUnit');
+        Route::get('/service/laporan/{id}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'laporan'])->name('service.laporan');
+        Route::get('all_history/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'getAll'])->name('service.getAll');
+        Route::get('total/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'getTotal'])->name('service.getTotal');
+        Route::get('rekap/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'laporanRekap'])->name('service.laporanRekap');
+        Route::get('laporan/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'laporanAllUnit'])->name('service.laporanAllUnit');
         
-        Route::get('/service/data/{id}', [ServiceController::class, 'Getdata'])->name('service.history2');
+        Route::get('/service/sparepart', [ServiceController::class, 'detailByBarang'])->name('service.detail');
+        Route::get('/service/barang/{id_barang}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'getByBarang'])->name('service.get_barang');
+        Route::get('/service/cetak/{id_barang}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'cetakByBarang'])->name('service.cetakByBarang');
+        Route::get('/service/data/{id}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'Getdata'])->name('service.history2');
         Route::resource('/service', ServiceController::class)
             ->except('create','update','selesai');
 
         Route::get('/sparepart/{id_permintaan}/create', [SparepartController::class, 'create'])->name('sparepart.create');       
+        Route::get('/sparepart/data', [SparepartController::class, 'data'])->name('sparepart.data');
+        Route::get('/sparepart/{tanggal_awal}/{tanggal_akhir}', [SparepartController::class, 'getAll'])->name('sparepart.getAll');
+        Route::get('/sparepart/laporan/{tanggal_awal}/{tanggal_akhir}', [SparepartController::class, 'laporan'])->name('sparepart.laporan');       
         Route::resource('/sparepart', SparepartController::class)
         ->except('create');
 
-        Route::get('/sparepartdetail/loadform/{total}', [SparepartdetailController::class, 'loadForm'])->name('sparepartdetail.load_form');
-        Route::get('/sparepartdetail/{id}/data', [SparepartDetailController::class, 'data'])->name('sparepartdetail.data');
-        Route::resource('/sparepartdetail', SparepartdetailController::class);
     });
 
     Route::group(['middleware' => 'level:1'], function () {
-        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/laporan/data/{awal}/{akhir}', [LaporanController::class, 'data'])->name('laporan.data');
-        Route::get('/laporan/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF'])->name('laporan.export_pdf');
 
         Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
         Route::resource('/user', UserController::class);
@@ -177,5 +222,38 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['middleware' => 'level:1,2'], function () {
         Route::get('/profil', [UserController::class, 'profil'])->name('user.profil');
         Route::post('/profil', [UserController::class, 'updateProfil'])->name('user.update_profil');
+    });
+
+    Route::group(['middleware' => 'level:1,2,3,4'], function () {
+        Route::get('/barang/data', [BarangController::class, 'data'])->name('barang.data');
+        Route::post('/barang/delete-selected', [BarangController::class, 'deleteSelected'])->name('barang.delete_selected');
+        Route::post('/barang/cetak-barcode', [BarangController::class, 'cetakBarcode'])->name('barang.cetak_barcode');
+        Route::get('/barang/data/{kelompok}', [BarangController::class, 'byKelompok'])->name('barang.kelompok');
+        Route::get('/barang/detail/{id_barang}', [BarangController::class, 'detail'])->name('barang.detail');
+        Route::resource('/barang', BarangController::class);
+
+        Route::get('/ban/data', [BanController::class, 'data'])->name('ban.data');
+        Route::get('/ban/pakai', [BanController::class, 'dataPakai'])->name('ban.dataPakai');
+        Route::get('/ban/list-pakai', [BanController::class, 'banPakai'])->name('ban.banPakai');
+        Route::resource('/ban', BanController::class);
+
+
+        Route::get('/permintaan/{id}/sparepart', [PermintaanController::class, 'sparepart'])->name('permintaan.sparepart');
+        Route::get('/permintaan/selesai/{id}', [PermintaanController::class, 'selesai'])->name('permintaan.selesai');
+        Route::get('/permintaan/nota/{id}', [PermintaanController::class, 'notaBesar'])->name('permintaan.nota_besar');
+        Route::post('/permintaan/store', [PermintaanController::class, 'store'])->name('permintaan.store');
+        Route::get('/service/data', [ServiceController::class, 'data'])->name('service.data');
+        
+        Route::get('/service/sparepart', [ServiceController::class, 'detailByBarang'])->name('service.detail');
+        Route::get('/service/barang/{id_barang}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'getByBarang'])->name('service.get_barang');
+        Route::get('/service/cetak/{id_barang}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'cetakByBarang'])->name('service.cetakByBarang');
+        Route::get('/service/data/{id}/{tanggal_awal}/{tanggal_akhir}', [ServiceController::class, 'Getdata'])->name('service.history2');
+        Route::resource('/service', ServiceController::class)
+            ->except('create', 'update');
+
+        Route::get('/permintaandetail/{id}/data', [PermintaandetailController::class, 'data'])->name('permintaandetail.data');
+        Route::resource('/permintaandetail', PermintaandetailController::class)
+            ->except('index', 'show');
+        Route::get('permintaandetail/{id}', [PermintaandetailController::class, 'index'])->name('permintaandetail.index');
     });
 });

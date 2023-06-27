@@ -21,19 +21,27 @@
                     <div class="form-group row">
                         <label for="kode_customer" class="col-lg-2 col-lg-offset-1 control-label">Kode Aset</label>
                         <div class="col-lg-6">
-                            <select name="kode_customer" id="kode_customer" class="form-control" required>
+                            <select name="kode_customer" id="kode_customer" class="form-control selectpicker" data-live-search="true" required>
                                 <option value="">Pilih Aset</option>
-                                @foreach ($kendaraan as $key => $item)
-                                <option value="{{ $key }}">{{ $item }}</option>
+                                @foreach ($kendaraan as $item)
+                                <option value="{{ $item->kode_member }}">{{ $item->kode_kabin }} || {{$item->nopol}}</option>
                                 @endforeach
                             </select>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="km" class="col-lg-2 col-lg-offset-1 control-label">KM saat Service</label>
+                        <div class="col-lg-6">
+                        <input type="number" name="km" id="km" class="form-control"
+                                style="border-radius: 0 !important;" min="0">
+                            <span class="help-block with-errors"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="id_lokasi" class="col-lg-2 col-lg-offset-1 control-label">Unit / Lokasi</label>
                         <div class="col-lg-6">
-                            <select name="id_lokasi" id="id_lokasi" class="form-control" required>
+                            <select name="id_lokasi" id="id_lokasi" class="form-control selectpicker" data-live-search="true" required>
                                 <option value="">Pilih Unit/Lokasi</option>
                                 @foreach ($lokasi as $key => $item)
                                 <option value="{{ $key }}">{{ $item }}</option>
@@ -60,7 +68,7 @@
                     <div class="form-group row">
                         <label for="id_mekanik" class="col-lg-2 col-lg-offset-1 control-label">Mekanik</label>
                         <div class="col-lg-6">
-                            <select name="id_mekanik" id="id_mekanik" class="form-control" required>
+                            <select name="id_mekanik" id="id_mekanik" class="form-control selectpicker" data-live-search="true" required>
                                 <option value="">Pilih Mekanik</option>
                                 @foreach ($mekanik as $key => $item)
                                 <option value="{{ $key }}">{{ $item }}</option>

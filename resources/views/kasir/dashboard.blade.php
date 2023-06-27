@@ -16,9 +16,15 @@
         <div class="box">
             <div class="box-body text-center">
                 <h1>Selamat Datang</h1>
-                <h2>Anda login sebagai Mekanik</h2>
+                @if (Auth::user()->level == 3)
+                <h2>Anda login sebagai Koordinator Maintenance</h2>
+                @elseif (Auth::user()->level == 4)
+                <h2>Anda login sebagai Logistik</h2>
+                @else
+                <h2>Anda login sebagai User</h2>
+                @endif
                 <br><br>
-                <a href="{{ route('pemeriksaan.index') }}" class="btn btn-success btn-lg">Permintaan Service</a>
+                <a href="{{ route('service.index') }}" class="btn btn-success btn-lg">Permintaan Service</a>
                 <br><br><br>
             </div>
         </div>

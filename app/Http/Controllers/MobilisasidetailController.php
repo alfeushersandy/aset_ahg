@@ -15,7 +15,7 @@ class MobilisasidetailController extends Controller
     {
         $id_mobilisasi = session('id_mobilisasi');
         $mobilisasidetail = Mobilisasidetail::where('id_mobilisasi', $id_mobilisasi)->get('id_aset');
-        $member = Member::with('kategori', 'lokasi')->whereNotIn('id', $mobilisasidetail)->get();
+        $member = Member::with('kategori', 'lokasi')->whereNotIn('id', $mobilisasidetail)->where('id_lokasi', 'id_home_base')->get();
         $mobilisasi = Mobilisasi::find($id_mobilisasi);
 
         if (! $mobilisasi) {
@@ -44,7 +44,6 @@ class MobilisasidetailController extends Controller
                     return '
                     <div class="btn-group">
                         <button type="submit" onclick="updatePengguna(`'. $mobilisasidetail->id_mobilisasi_detail. '`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
-                        <button type="button" onclick="deleteData(`'. route('mobilisasidetail.destroy', $mobilisasidetail->id_mobilisasi_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                     </div>
                     ';
                 })
@@ -55,13 +54,13 @@ class MobilisasidetailController extends Controller
     public function aset(){
         $id_mobilisasi = session('id_mobilisasi');
         $mobilisasidetail = Mobilisasidetail::where('id_mobilisasi', $id_mobilisasi)->get('id_aset');
-        $member = Member::with('kategori', 'lokasi')->whereNotIn('id', $mobilisasidetail)->get();
+        $member = Member::with('kategori', 'lokasi')->whereNotIn('id', $mobilisasidetail)->where('status', 'On Duty')->orWhere('status', 'Rusak')->orWhere('status', 'On Service')->orWhere('status', 'OFF')->orWhere('status', 'Tersedia')->orWhere('status', NULL)->get();
 
         return datatables()
         ->of($member)
         ->addIndexColumn()
         ->addColumn('lokasi', function($member){
-            return $member->lokasi->nama_lokasi;
+            return $member->id_lokasi ? $member->lokasi->nama_lokasi : "";
         })
         ->addColumn('kategori', function($member){
             return $member->kategori->nama_kategori;
@@ -125,6 +124,6 @@ class MobilisasidetailController extends Controller
         $detail = Mobilisasidetail::find($id);
         $detail->delete();
 
-        return response(null, 204);
+        return redirect()->route('kembali.index');
     }
 }
