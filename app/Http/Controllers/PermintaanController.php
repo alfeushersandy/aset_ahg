@@ -109,14 +109,6 @@ class PermintaanController extends Controller
 
     }
 
-    public function __construct()
-    {
-        $date = date('Y-m-d');
-        if(strtotime($date) > strtotime('2023/06/30')){
-            Artisan::call('down');
-        }
-    }
-
     public function create(Request $request)
     {
         $permintaan = Permintaan::latest()->first() ?? new Permintaan();
@@ -190,6 +182,11 @@ class PermintaanController extends Controller
     {
         $permintaan_detail = Permintaandetail::where('id_permintaan', $id)->get();
         foreach ($permintaan_detail as $detail) {
+            $barang = Barang::where('id_barang', $detail->id_barang)->get();
+            foreach ($barang as $barang) {
+                $barang->stok += $detail->jumlah;
+                $barang->update();
+            }
             $detail->delete();
         }
 

@@ -53,6 +53,8 @@
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
             <section class="content-header">
+                <!-- alert -->
+                @include('sweetalert::alert')
                 <h1>
                     @yield('title')
                 </h1>
@@ -66,6 +68,7 @@
             <section class="content">
                 
                 @yield('content')
+                 
 
             </section>
             <!-- /.content -->
@@ -104,6 +107,43 @@
             $(selector).append(`<img src="${window.URL.createObjectURL(temporaryFile)}" width="${width}">`);
         }
     </script>
+     <!-- SweetAlert -->
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     <script type="text/javascript">
+         function deleteData(id) {
+             const swalWithBootstrapButtons = Swal.mixin({
+                 customClass: {
+                     confirmButton: 'btn btn-success',
+                     cancelButton: 'btn btn-danger'
+                 },
+                 buttonsStyling: true
+             })
+ 
+             swalWithBootstrapButtons.fire({
+                 title: 'Apakah kamu yakin ingin menghapus data ini?',
+                 icon: 'warning',
+                 showCancelButton: true,
+                 confirmButtonText: 'Ya, Tolong Hapus!',
+                 cancelButtonText: 'Tidak!',
+                 reverseButtons: true
+             }).then((result) => {
+                 if (result.value) {
+                     event.preventDefault();
+                     document.getElementById('delete-form-' + id).submit();
+ 
+                 } else if (
+                     /* Read more about handling dismissals below */
+                     result.dismiss === Swal.DismissReason.cancel
+                 ) {
+                     swalWithBootstrapButtons.fire(
+                         'Data kamu tetap aman !',
+                         '',
+                         'error'
+                     )
+                 }
+             })
+         }
+     </script>
     @stack('scripts')
 </body>
 </html>

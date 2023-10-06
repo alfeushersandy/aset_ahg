@@ -24,13 +24,16 @@ use App\Http\Controllers\{
     KembaliController,
     MobilisasiController,
     MobilisasidetailController,
+    PenerimaanCartController,
     PenerimaanDetailController,
     PerencanaanController,
     PerencanaanDetailController,
     PermintaanBarangController,
 };
 use App\Models\Perencanaan;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +53,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::group(['middleware' => 'level:1,2,3'], function () {
+    Route::group(['middleware' => 'level:1,2,3|web'], function () {
         Route::get('/departemen/data', [DepartemenController::class, 'data'])->name('departemen.data');
         Route::resource('/departemen', DepartemenController::class);
 
@@ -133,8 +136,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/penerimaan/laporan/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'laporanAllUnit'])->name('penerimaan.laporanAllUnit');
         Route::get('/penerimaan/{tanggal_awal}/{tanggal_akhir}', [BarangdatangController::class, 'getAll'])->name('penerimaan.getAll');
 
-        Route::get('/penerimaandetail', [PenerimaanDetailController::class, 'index'])->name('penerimaan_detail.index');
-        Route::post('/penerimaandetail/store', [PenerimaanDetailController::class, 'store'])->name('penerimaan_detail.store');
+        Route::get('/penerimaandetail', [PenerimaanCartController::class, 'index'])->name('penerimaan_detail.index');
+        Route::post('/penerimaandetail/store', [PenerimaanCartController::class, 'store'])->name('penerimaan_detail.store');
         Route::get('/penerimaandetail/{id}/data', [PenerimaanDetailController::class, 'data'])->name('penerimaan_detail.data');
         Route::delete('/penerimaandetail/{id}/delete', [PenerimaanDetailController::class, 'data_destroy'])->name('penerimaan_detail.data_destroy');
         Route::post('/penerimaandetail/update', [PenerimaanDetailController::class, 'update'])->name('penerimaan_detail.update');
@@ -216,6 +219,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
         Route::get('/setting/first', [SettingController::class, 'show'])->name('setting.show');
+        Route::get('/shutdown', function(){return Artisan::call('down', ['--secret' => env("SECRET_KEY")]);});
+        Route::get('/live', function(){return Artisan::call('up');});
         Route::post('/setting', [SettingController::class, 'update'])->name('setting.update');
     });
  

@@ -9,6 +9,7 @@ use App\Models\Perencanaan;
 use App\Models\PerencanaanDetail;
 use App\Models\Setting;
 use App\Models\Member;
+use App\Models\Penerimaan_cart;
 use Illuminate\Cache\NullStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +43,6 @@ class BarangdatangController extends Controller
                 ->leftJoin('barang','barang.id_barang','=','penerimaan_detail.id_barang')
                 ->select('nomor_terima', 'tb_ren.kode_rencana', 'tanggal_terima', 'kode_barang', 'nama_barang', 'jumlah_terima', 'sisa_vol_terima', 'harga_terima', 'subtotal_terima', 'id_aset'  )
                 ->get();
-        dd($penerimaan);
 
                 return datatables()
                 ->of($penerimaan)
@@ -57,25 +57,33 @@ class BarangdatangController extends Controller
         $nomor_terima1 = substr($penerimaan->nomor_terima,2);
         $nomor_terima = (int) $nomor_terima1 +1;
 
-        $terima = new Penerimaan();
-        $terima->tanggal_terima = $request->tanggal;
-        $terima->nomor_terima = 'T-'.tambah_nol_didepan($nomor_terima, 5);
-        $terima->id_perencanaan = $request->id_perencanaan;
-        $terima->penerima = $request->penerima;
-        $terima->user_input = Auth::user()->id;
-        $terima->save();
+        if(session('id_penerimaan')){
+            return redirect(route('penerimaan_detail.index'))->with('error', 'masih ada transaksi aktif Harap selesaikan dahulu'); 
+        }else{
+            $terima = new Penerimaan();
+            $terima->tanggal_terima = $request->tanggal;
+            $terima->nomor_terima = 'T-'.tambah_nol_didepan($nomor_terima, 5);
+            $terima->id_perencanaan = $request->id_perencanaan;
+            $terima->penerima = $request->penerima;
+            $terima->user_input = Auth::user()->id;
+            $terima->save();
 
-        session(['id_penerimaan' => $terima->id_penerimaan,
-                'id_perencanaan' => $request->id_perencanaan
-                ]);
-
-        return redirect()->route('penerimaan_detail.index');
+            session(['penerimaan' => $request->all()]);
+    
+            session([
+                    'id_perencanaan' => $request->id_perencanaan,
+                    'id_penerimaan' => $terima->id_penerimaan
+                    ]);
+    
+            return redirect()->route('penerimaan_detail.index');
+        }
     }
 
     public function simpan(Request $request)
     {
         
-        $detail = PenerimaanDetail::where('id_penerimaan', $request->id_penerimaan)->get();
+        $detail =  Penerimaan_cart::where('id_user', Auth::user()->id)->get();
+        //update stok barang
         foreach ($detail as $item) {
 
             $produk = Barang::find($item->id_barang);
@@ -83,7 +91,25 @@ class BarangdatangController extends Controller
             $produk->update();
             
         }
+        //masukkan ke table penerimaandetail
+        foreach ($detail as $penerimaan) {
+            $detail = new PenerimaanDetail();
+            $detail->id_penerimaan = session('id_penerimaan');
+            $detail->id_perencanaan = $penerimaan->id_perencanaan;
+            $detail->id_perencanaan_detail = $penerimaan->id_perencanaan_detail;
+            $detail->id_barang = $penerimaan->id_barang;
+            $detail->jumlah_terima = $penerimaan->jumlah_terima;
+            $detail->sisa_vol_terima = $penerimaan->sisa_vol_terima;
+            $detail->harga_terima = $penerimaan->harga_terima;
+            $detail->subtotal_terima = $penerimaan->subtotal_terima;
+            $detail->status_penerimaan = $penerimaan->status_penerimaan;
+            $detail->user_input = Auth::user()->id;
+            $detail->save();
+        }
 
+        //hapus data di penerimaan cart
+        Penerimaan_cart::where('id_user', Auth::user()->id)->delete();
+        
         return redirect()->route('penerimaan.index');
 
     }

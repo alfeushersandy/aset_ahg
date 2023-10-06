@@ -45,7 +45,7 @@ class PenerimaanDetailController extends Controller
             $row['jumlah']      = $item->jumlah_terima;
             $row['subtotal']    = 'Rp. '. format_uang($item->subtotal_terima);
             $row['aksi']        = '<div class="btn-group">
-                                    <button onclick="deleteData(`'. route('perencanaan_detail.destroy', $item->id_perencanaan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                                    <button onclick="deleteData(`'. route('penerimaan_detail.data_destroy', $item->id_penerimaan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                                 </div>';
             $data[] = $row;
 
@@ -79,7 +79,7 @@ class PenerimaanDetailController extends Controller
             return response()->json('Data gagal disimpan', 400);
         }
 
-        if($request->id_kategori == 8){
+        if($request->id_kategori == 5){
             session(['barang_terima' => $request->all()]);
             return response()->json('Data berhasil disimpan', 200);
         }else{
@@ -141,6 +141,10 @@ class PenerimaanDetailController extends Controller
     public function data_destroy($id)
     {
         $detail = PenerimaanDetail::find($id);
+        $pr_detail = PerencanaanDetail::where('id_perencanaan_detail', $detail->id_perencanaan_detail)->first();
+        $pr_detail->sisa_terima += $detail->jumlah_terima;
+        $pr_detail->update();
+        
         $detail->delete();
 
         $detail->user_delete = Auth::user()->id;
@@ -150,9 +154,7 @@ class PenerimaanDetailController extends Controller
         $barang->stok -= $detail->jumlah_terima; 
         $barang->update();  
         
-        $pr_detail = PerencanaanDetail::where('id_perencanaan_detail', $detail->id_perencanaan_detail)->first();
-        $pr_detail->sisa_terima += $detail->jumlah_terima;
-        $pr_detail->update();
+        
 
         return response(null, 204);
     }

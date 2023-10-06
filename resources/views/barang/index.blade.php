@@ -136,7 +136,7 @@
 
         $('[name=id_kategori]').on('change', function () {
             let kategori = $('#modal-form [name=id_kategori]').val();
-            if(kategori == 5){
+            if(kategori == 5){ 
                 $('#modal-form .btn-primary').text('Next');
             }else{
                 $('#modal-form .btn-primary').html('<i class="fa fa-save"></i> Simpan');
@@ -175,7 +175,7 @@
 
     function editForm(url) {
         $('#modal-form').modal('show');
-        $('#modal-form .modal-title').text('Edit Produk');
+        $('#modal-form .modal-title').text('Edit Barang');
 
         $('#modal-form form')[0].reset();
         $('#modal-form form').attr('action', url);
@@ -184,6 +184,9 @@
 
         $.get(url)
             .done((response) => {
+                if(response.id_kategori == 5){
+                    $('#modal-form .btn-primary').text('Next');
+                }
                 console.log(response)
                 $('#modal-form [name=nama_barang]').val(response.nama_barang);
                 $('#modal-form [name=id_kategori]').val(response.id_kategori);
@@ -193,6 +196,13 @@
                 $('#modal-form [name=harga_jual]').val(response.harga_jual);
                 $('#modal-form [name=diskon]').val(response.diskon);
                 $('#modal-form [name=stok]').val(response.stok);
+                $('#modal-form .modal-body').append(`
+                                            <div class="form-group row">
+                                                <div class="col-lg-6">
+                                                    <input type="hidden" name="kode_barang" id="kode_barang" class="form-control">
+                                                    <span class="help-block with-errors"></span>
+                                                </div>`)
+                $('#modal-form [name=kode_barang]').val(response.kode_barang);
             })
             .fail((errors) => {
                 alert('Tidak dapat menampilkan data');

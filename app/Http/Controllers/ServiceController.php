@@ -114,14 +114,6 @@ class ServiceController extends Controller
         return view('service_history.index', compact('member'));
     }
 
-    public function __construct()
-    {
-        $date = date('Y-m-d');
-        if(strtotime($date) > strtotime('2023/07/04')){
-            Artisan::call('down');
-        }
-    }
-
     public function Getdata($id, $tanggal_awal, $tanggal_akhir)
     {
         

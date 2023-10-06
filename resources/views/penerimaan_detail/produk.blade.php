@@ -7,7 +7,7 @@
                 <h4 class="modal-title">Pilih Produk</h4>
             </div>
             <div class="modal-body">
-                <table class="table table-striped table-bordered table-produk">
+                <table class="table table-striped table-bordered table-barang">
                     <thead>
                         <th width="5%">No</th>
                         <th>Nama Barang</th>

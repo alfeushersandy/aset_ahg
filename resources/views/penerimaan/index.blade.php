@@ -20,6 +20,9 @@
             <div class="box-header with-border">
                 <button onclick="editForm()" class="btn btn-success btn-xs btn-flat revisi"><i class="fa fa-plus-circle"></i>Revisi</button>
                 <button onclick="addForm('{{ route('penerimaan.create') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i>Input Penerimaan Barang</button>
+                @if (session('id_penerimaan'))
+                    <button onclick="direct('{{ route('penerimaan_detail.index') }}')" class="btn btn-danger btn-xs btn-flat"><i class="fa fa-plus-circle"></i>Transaksi aktif</button>   
+                @endif
             </div>
             <div class="box-body table-responsive">
                 <table id="example" class="table table-stiped table-bordered nowrap table-barang-keluar" >
@@ -122,6 +125,12 @@
     $('#rencana').on("click", function(){
         $('#modal-rencana').modal('show');
     })
+
+    function direct(url)
+    {
+        window.location.href = url
+    }
+
 
     function addForm(url) {
         $('#modal-form').modal('show');
