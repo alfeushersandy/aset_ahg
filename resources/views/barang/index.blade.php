@@ -62,11 +62,12 @@
 @includeIf('barang.form')
 @includeIf('barang.form_ban')
 @includeIf('barang.showdetail')
+@includeIf('barang.listban')
 @endsection
 
 @push('scripts')
 <script>
-    let table,table1;
+    let table,table2;
 
     $(function () {
         table = $('.table-barang').DataTable({
@@ -92,12 +93,30 @@
             ]
         });
 
+        table2 = $('.table-ban').DataTable({
+            order : [1, 'DESC'],
+            responsive: true,
+            processing: true,
+            serverSide: false,
+            autoWidth: false,
+            data: [],
+            columns: [
+                {data: 'nomor_seri'},
+                {data: 'kode_ban'},
+                {data: 'tgl_beli'},
+                {data: 'tgl_pakai'},
+                {data: 'id_aset'},
+            ],
+        })
+
 
         $('#tombol_simpan').on('click', function(e){
             if (! e.preventDefault()) {
                     $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
                         .done((response) => {
-                            if($('#modal-form [name=id_kategori]').val() == 5){
+                            console.log(response)
+                            if($('#modal-form [name=_method]').val() == 'post'){
+                                if($('#modal-form [name=id_kategori]').val() == 5){
                                     $('#modal-form-ban').modal('show');
                                     $('#modal-form-ban .modal-body').empty();
                                     for (let index = 0; index < $('#stok').val(); index++) {
@@ -118,10 +137,22 @@
                                             </div>
                                         </div><br>`)
                                     }
+                                }else{
+                                    $('#modal-form').modal('hide');
+                                    table.ajax.reload();
+                                }
                             }else{
-                                $('#modal-form').modal('hide');
-                                table.ajax.reload();
+                                if($('#modal-form [name=id_kategori]').val() == 5){
+                                    $('#modal-form').modal('hide');
+                                    $('#modal-ban').modal('show');
+                                    table2.ajax.url("barang/detail/"+response.id_barang);
+                                    table2.ajax.reload();
+                                }else{
+                                    $('#modal-form').modal('hide');
+                                    table.ajax.reload();
+                                }
                             }
+                            
                         })
                         .fail((errors) => {
                             alert('Tidak dapat menyimpan data');

@@ -25,7 +25,7 @@ class PenerimaanCartController extends Controller
         $id_penerimaan = session('id_penerimaan');
         $penerimaan = Penerimaan::where('id_penerimaan', $id_penerimaan)->first();
         $perencanaan = PerencanaanDetail::with('barang')->where('id_perencanaan', $id_perencanaan)->where('sisa_terima', '!=', 0)->get();
-        $total = Penerimaan_cart::whereBelongsTo(Auth::user())->sum('subtotal_terima');
+        $total = Penerimaan_cart::whereBelongsTo(Auth::user())->get() ? Penerimaan_cart::whereBelongsTo(Auth::user())->sum('subtotal_terima') : 0 ;
         $cart = Penerimaan_cart::with('barang')->where('id_user', Auth::id())->where('id_perencanaan', session('id_perencanaan'))->get();
         if (! $perencanaan) {
             abort(404);
