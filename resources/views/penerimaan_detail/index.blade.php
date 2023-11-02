@@ -101,7 +101,7 @@
                                 <td>{{$item->jumlah_terima}}</td>
                                 <td>{{$item->subtotal_terima}}</td>
                                 <td><div class="btn-group">
-                                    <button onclick="deleteData(`'. route('penerimaan_detail.data_destroy', $item->id_penerimaan_detail) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                                    <button onclick="deleteData('{{ route('penerimaan_cart.destroy', $item->id)}}')" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
                                 </div></td>
                             </tr>
                         @endforeach
@@ -140,6 +140,7 @@
 
 @includeIf('penerimaan_detail.produk')
 @includeIf('penerimaan_detail.form')
+@includeIf('penerimaan_detail.form_ban')
 {{-- @includeIf('penerimaan_detail.form_ban') --}}
 @endsection
 
@@ -169,7 +170,11 @@
                         alert('Jumlah Terima tidak bisa kurang dari 0');
                     } else if (val > max) {
                         alert('Jumlah Terima maksimal adalah ' + max);
-                    } 
+                    } else{
+                        if (! e.preventDefault()) {
+                            tambahProduk();
+                        }
+                    }
             })
     function tampilProduk() {
         $('#modal-produk').modal('show');
@@ -189,6 +194,7 @@
     function tampilForm(id, kode, id_rencana_detail, id_rencana,  sisa_terima, biaya_perkiraan, id_kategori) {
         hideProduk();
         $('#modal-aset-form').modal('show');
+        $('#modal-aset-form [name=jumlah_terima]').val('');
         $('#id_barang').val(id);
         $('#kode_barang').val(kode);
         $('#id_perencanaan_detail').val(id_rencana_detail);
@@ -204,10 +210,34 @@
     }
 
     function tambahProduk() {
-        $.post('{{ route('perencanaan_detail.store') }}', $('.form-produk').serialize())
+        $.post('{{ route('penerimaan_detail.store') }}', $('.form-aset').serialize())
             .done(response => {
-                $('#kode_produk').focus();
-                table.ajax.reload()
+                if($('#modal-aset-form [name=id_kategori]').val() == 5){
+                        $('#modal-aset-form').modal('hide');
+                        $('#modal-form-ban').modal('show');
+                        $('#modal-form-ban .modal-body').empty();
+                            for (let index = 0; index < $('#jumlah_terima').val(); index++) {
+                                $('#modal-form-ban .modal-body').append(`<div class="form-section">
+                                    <div class="form-group row">
+                                        <label for="ban" class="col-lg-2 col-lg-offset-1 control-label">Nomor Seri Pabrik</label>
+                                        <div class="col-lg-6">
+                                            <input type="text" name="ban[${index}]['nomor_seri']" id="ban" class="form-control" required>
+                                            <span class="help-block with-errors"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="ban" class="col-lg-2 col-lg-offset-1 control-label">Tanggal Diterima</label>
+                                        <div class="col-lg-6">
+                                            <input type="date" name="ban[${index}]['tanggal_beli']" id="ban" class="form-control" value=now() required>
+                                            <span class="help-block with-errors"></span>
+                                        </div>
+                                    </div>
+                                </div><br>`)
+                            }
+                }else{
+                    $('#kode_produk').focus();
+                    window.location.href = '{{ route('penerimaan_detail.index') }}'
+                }
             })
             .fail(errors => {
                 alert('Tidak dapat menyimpan data');
@@ -222,7 +252,7 @@
                     '_method': 'delete'
                 })
                 .done((response) => {
-                    table.ajax.reload() 
+                    window.location.href = '{{ route('penerimaan_detail.index') }}'
                 })
                 .fail((errors) => {
                     alert('Tidak dapat menghapus data');

@@ -109,10 +109,13 @@ class PenerimaanCartController extends Controller
         }else{
             if($request->id_kategori == 5){
                 session(['barang_terima' => $request->all()]);
-                return response()->json('Data berhasil disimpan', 200);
+                return response()->json([
+                    'barang_terima' => session('barang_terima')
+                ]);
             }else{
                 $detail = new Penerimaan_cart();
                 $detail->id_user = Auth::id();
+                $detail->id_penerimaan = session('id_penerimaan');
                 $detail->id_perencanaan = $request->id_perencanaan;
                 $detail->id_perencanaan_detail = $request->id_perencanaan_detail;
                 $detail->id_barang = $request->id_barang;
@@ -143,18 +146,18 @@ class PenerimaanCartController extends Controller
 
 
                 //update table rencana di biaya realisasi
-                $jumlah_realisasi = PerencanaanDetail::where('id_perencanaan', $detail->id_rencana)->sum('subtotal');
-                $penerimaan_detail = PerencanaanDetail::where('id_perencanaan', $detail->id_perencanaan)->count();
-                $penerimaan_by_status = PerencanaanDetail::where('id_perencanaan', $detail->id_perencanaan)->where('status', 'Terealisasi')->count();
-                $perencanaan = Perencanaan::find($detail->id_perencanaan);
-                if($penerimaan_detail !== $penerimaan_by_status){
-                    $perencanaan->total_harga_realisasi = $jumlah_realisasi;
-                    $perencanaan->update();
-                }else{
-                    $perencanaan->total_harga_realisasi = $jumlah_realisasi;
-                    $perencanaan->status = "Seluruh Rencana Telah Terealisasi";
-                    $perencanaan->update();
-                }
+                // $jumlah_realisasi = PerencanaanDetail::where('id_perencanaan', $detail->id_rencana)->sum('subtotal');
+                // $penerimaan_detail = PerencanaanDetail::where('id_perencanaan', $detail->id_perencanaan)->count();
+                // $penerimaan_by_status = PerencanaanDetail::where('id_perencanaan', $detail->id_perencanaan)->where('status', 'Terealisasi')->count();
+                // $perencanaan = Perencanaan::find($detail->id_perencanaan);
+                // if($penerimaan_detail !== $penerimaan_by_status){
+                //     $perencanaan->total_harga_realisasi = $jumlah_realisasi;
+                //     $perencanaan->update();
+                // }else{
+                //     $perencanaan->total_harga_realisasi = $jumlah_realisasi;
+                //     $perencanaan->status = "Seluruh Rencana Telah Terealisasi";
+                //     $perencanaan->update();
+                // }
     
                 return redirect()->route('penerimaan_detail.index')->with('success', 'barang berhasil ditambahkan');
             }
@@ -203,6 +206,20 @@ class PenerimaanCartController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $detail = Penerimaan_cart::find($id);
+        $pr_detail = PerencanaanDetail::where('id_perencanaan_detail', $detail->id_perencanaan_detail)->first();
+        $pr_detail->sisa_terima += $detail->jumlah_terima;
+        $pr_detail->update();
+        
+        $detail->delete();
+
+        // $detail->user_delete = Auth::user()->id;
+        // $detail->update();
+
+        // $barang = Barang::where('id_barang', $detail->id_barang)->first();
+        // $barang->stok -= $detail->jumlah_terima; 
+        // $barang->update();  
+        
+        return response(null, 204);
     }
 }

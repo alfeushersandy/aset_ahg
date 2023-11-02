@@ -9,7 +9,7 @@ class Penerimaan_cart extends Model
 {
     use HasFactory;
     protected $table = 'penerimaan_cart';
-    protected $primaryKey = 'id_cart';
+    protected $primaryKey = 'id';
     protected $guarded = [];
 
     public function barang()

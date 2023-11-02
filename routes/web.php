@@ -138,8 +138,9 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/penerimaandetail', [PenerimaanCartController::class, 'index'])->name('penerimaan_detail.index');
         Route::post('/penerimaandetail/store', [PenerimaanCartController::class, 'store'])->name('penerimaan_detail.store');
+        Route::delete('/penerimaandetail/{id}/delete', [PenerimaanCartController::class, 'destroy'])->name('penerimaan_cart.destroy');
         Route::get('/penerimaandetail/{id}/data', [PenerimaanDetailController::class, 'data'])->name('penerimaan_detail.data');
-        Route::delete('/penerimaandetail/{id}/delete', [PenerimaanDetailController::class, 'data_destroy'])->name('penerimaan_detail.data_destroy');
+        // Route::delete('/penerimaandetail/{id}/delete', [PenerimaanDetailController::class, 'data_destroy'])->name('penerimaan_detail.data_destroy');
         Route::post('/penerimaandetail/update', [PenerimaanDetailController::class, 'update'])->name('penerimaan_detail.update');
         Route::post('/penerimaandetail/ban', [PenerimaanDetailController::class, 'banStore'])->name('penerimaan_detail.ban');
 
