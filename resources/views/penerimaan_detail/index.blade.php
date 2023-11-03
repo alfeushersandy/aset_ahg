@@ -212,6 +212,7 @@
     function tambahProduk() {
         $.post('{{ route('penerimaan_detail.store') }}', $('.form-aset').serialize())
             .done(response => {
+                console.log(response)
                 if($('#modal-aset-form [name=id_kategori]').val() == 5){
                         $('#modal-aset-form').modal('hide');
                         $('#modal-form-ban').modal('show');

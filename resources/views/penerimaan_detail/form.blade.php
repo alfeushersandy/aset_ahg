@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group-row">
-                            <input type="hidden" name="id_penerimaan" id="id_penerimaan" value="">
+                            <input type="hidden" name="id_penerimaan" id="id_penerimaan" value="{{ $penerimaan->id_penerimaan }}">
                             <input type="hidden" name="id_barang" id="id_barang">
                             <input type="hidden" name="id_perencanaan_detail" id="id_perencanaan_detail">
                             <input type="hidden" name="id_perencanaan" id="id_perencanaan">

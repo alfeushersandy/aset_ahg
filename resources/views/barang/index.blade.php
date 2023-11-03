@@ -63,11 +63,16 @@
 @includeIf('barang.form_ban')
 @includeIf('barang.showdetail')
 @includeIf('barang.listban')
+@includeIf('barang.edit_ban')
 @endsection
 
 @push('scripts')
 <script>
-    let table,table2;
+    let table;
+    let table2;
+    let id_barang;
+    let stok = 0
+    
 
     $(function () {
         table = $('.table-barang').DataTable({
@@ -106,6 +111,7 @@
                 {data: 'tgl_beli'},
                 {data: 'tgl_pakai'},
                 {data: 'id_aset'},
+                {data: 'aksi'},
             ],
         })
 
@@ -147,6 +153,7 @@
                                     $('#modal-ban').modal('show');
                                     table2.ajax.url("barang/detail/"+response.id_barang);
                                     table2.ajax.reload();
+                                    getSession();
                                 }else{
                                     $('#modal-form').modal('hide');
                                     table.ajax.reload();
@@ -159,6 +166,16 @@
                             return;
                         });
                 }
+        })
+
+        $('#edit-ban').on('click', function(e){
+            if (! e.preventDefault()) {
+                $.post($('#modal-edit-ban form').attr('action'), $('#modal-edit-ban form').serialize())
+                    .done((response) => {
+                        $('#modal-edit-ban').modal('hide');
+                        table2.ajax.reload();
+                    })
+            }
         })
 
         $('[name=select_all]').on('click', function () {
@@ -187,6 +204,7 @@
                 {data: 'tgl_beli'},
                 {data: 'tgl_pakai'},
                 {data: 'id_aset'},
+                {data: 'aksi'},
             ]
         })
 
@@ -217,6 +235,8 @@
             .done((response) => {
                 if(response.id_kategori == 5){
                     $('#modal-form .btn-primary').text('Next');
+                }else{
+                    $('#modal-form .btn-primary').text('simpan');
                 }
                 console.log(response)
                 $('#modal-form [name=nama_barang]').val(response.nama_barang);
@@ -296,6 +316,89 @@
             table1.ajax.url(url);
             table1.ajax.reload();
         }
+
+    function addBan(url){
+        
+        $('#modal-edit-ban form').attr('action', url);
+        $('#modal-edit_ban [name=_method]').val('post');
+        $('#modal-edit-ban .modal-body').empty();
+        $.get('/barang/count/'+id_barang)
+            .done((response) => {
+                console.log(response)
+                console.log(stok)
+                if(response == stok || response > stok){
+                    alert('tidak dapat menambahkan data karena jumlah data sesuai stok')
+                }else{
+                    $('#modal-edit-ban').modal('show');
+                    $('#modal-edit-ban .modal-body').append(`<div class="form-section">
+                                                <div class="form-group row">
+                                                    <label for="ban" class="col-lg-2 col-lg-offset-1 control-label">Nomor Seri Pabrik</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="text" name="edit_nomor_seri" id="edit_nomor_seri" class="form-control" required>
+                                                        <span class="help-block with-errors"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="ban" class="col-lg-2 col-lg-offset-1 control-label">Tanggal Diterima</label>
+                                                    <div class="col-lg-6">
+                                                        <input type="date" name="tanggal_beli" id="tanggal_beli" class="form-control" value=now() required>
+                                                        <span class="help-block with-errors"></span>
+                                                    </div>
+                                                </div>
+                                            </div><br>`)
+                }
+            })
+    }
+
+    function simpanBan()
+    {
+        $.get('/barang/count/'+id_barang)
+            .done((response) => {
+                if(response == stok){
+                    $.get('barang/updateban')
+                        .done((response) => {
+                            $('#modal-ban').modal('hide');
+                            table.ajax.reload()
+                        })
+                }else{
+                    alert('tidak dapat menyimpan data karena jumlah data kurang dari atau lebih dari stok')
+                }
+            })
+    }
+
+    function getSession(){
+        $.ajax({
+            url: '/barang/getsession', 
+            method: 'GET',
+            success: function(data) {
+                // Handle the session data here
+                id_barang = data.id_barang
+                stok = data.produk.stok
+                console.log(id_barang)
+            },
+            error: function(xhr, status, error) {
+                // Handle errors here
+                console.error('Error:', status, error);
+            }
+        })
+    }
+
+    function deleteBan(url){
+        if (confirm('Yakin ingin menghapus data terpilih?')) {
+            $.post(url, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'delete'
+                })
+                .done((response) => {
+                    console.log(response)
+                    table2.ajax.reload();
+                })
+                .fail((errors) => {
+                    alert('Tidak dapat menghapus data');
+                    return;
+                });
+        }
+    }
 
 </script>
 @endpush

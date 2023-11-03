@@ -104,11 +104,27 @@ class BarangdatangController extends Controller
             $detail->subtotal_terima = $penerimaan->subtotal_terima;
             $detail->status_penerimaan = $penerimaan->status_penerimaan;
             $detail->user_input = Auth::user()->id;
-            $detail->save();
+            $detail->save();          
+        }
+
+        //update table rencana di biaya realisasi
+        $jumlah_realisasi = PerencanaanDetail::where('id_perencanaan', $detail->id_rencana)->sum('subtotal');
+        $penerimaan_detail = PerencanaanDetail::where('id_perencanaan', $detail->id_perencanaan)->count();
+        $penerimaan_by_status = PerencanaanDetail::where('id_perencanaan', $detail->id_perencanaan)->where('status', 'Terealisasi')->count();
+        $perencanaan = Perencanaan::find($detail->id_perencanaan);
+        if($penerimaan_detail !== $penerimaan_by_status){
+            $perencanaan->total_harga_realisasi = $jumlah_realisasi;
+            $perencanaan->update();
+        }else{
+            $perencanaan->total_harga_realisasi = $jumlah_realisasi;
+            $perencanaan->status = "Seluruh Rencana Telah Terealisasi";
+            $perencanaan->update();
         }
 
         //hapus data di penerimaan cart
         Penerimaan_cart::where('id_user', Auth::user()->id)->delete();
+        $request->session()->forget('barang_terima');
+        $request->session()->forget('id_penerimaan');
         
         return redirect()->route('penerimaan.index');
 

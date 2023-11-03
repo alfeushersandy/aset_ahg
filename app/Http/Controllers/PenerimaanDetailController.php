@@ -275,6 +275,8 @@ class PenerimaanDetailController extends Controller
             $perencanaan->status = "Seluruh Rencana Telah Terealisasi";
             $perencanaan->update();
         }
+
+        
         
         $request->session()->forget('barang_terima');
         return redirect()->route('penerimaan_detail.index');

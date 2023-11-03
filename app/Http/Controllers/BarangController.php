@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Ban;
 use App\Models\Kategori;
 use App\Models\Barang;
 use Illuminate\Http\Request;
@@ -85,7 +87,10 @@ class BarangController extends Controller
             return response()->json('Data berhasil disimpan', 200);
         }else{
             session(['produk' => $request->all(), 'id_barang' => $id_barang]);
-            return response()->json('Data berhasil disimpan', 200);
+            return response()->json([
+                'produk' => session('produk'),
+                'id_barang' => session('id_barang')
+            ]);
         }
 
         
@@ -160,12 +165,53 @@ class BarangController extends Controller
 
         $barang = Barang::leftjoin('detail_barang', 'detail_barang.id_barang', 'barang.id_barang')
                          ->where('detail_barang.id_barang', $id_barang)
+                         ->where('deleted_at', null)
                          ->get();
         
     return datatables()
             ->of($barang)
             ->addIndexColumn()
+            ->addColumn('aksi', function ($barang) {
+                return '
+                        <div class="btn-group">
+                            <button type="button" onclick="deleteBan(`'. route('ban.destroy', $barang->id_detail_barang) .'`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                        </div>
+                        ';
+            })
+            ->rawColumns(['aksi'])
             ->make(true);
+    }
+
+    public function countBan($id_barang){
+        $ban = Ban::where('id_barang', $id_barang)->count();
+        return response()->json($ban);
+    }
+
+    public function getSession(){
+        return response()->json([
+            'produk' => session('produk'),
+            'id_barang' => session('id_barang')
+        ]);
+    }
+
+    public function updateban()
+    {
+        $id_barang = session('id_barang');
+        $barang = Barang::find($id_barang);
+
+        $barang->update([
+            'nama_barang' => session('produk.nama_barang'),
+            'id_kategori' => session('produk.id_kategori'),
+            'satuan' => session('produk.satuan'),
+            'kelompok' => session('produk.kelompok'),
+            'merk' => session('produk.merk'),
+            'harga' => session('produk.harga'),
+            'stok' => session('produk.stok'),
+        ]);
+
+        session()->forget(['produk', 'id_barang']);
+
+        return response()->json('data berhasil di update', 200);
     }
     
 }

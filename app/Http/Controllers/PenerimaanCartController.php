@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ban;
 use Illuminate\Http\Request;
 use App\Models\Perencanaan;
 use App\Models\PerencanaanDetail;
@@ -64,7 +65,14 @@ class PenerimaanCartController extends Controller
                     ->whereBelongsTo($request->user())
                     ->where('id_barang', $request->id_barang)
                     ->first();
-        //cek apakah barang sudah ditambahkan
+
+        if($request->id_kategori == 5){
+            session(['barang_terima' => $request->all()]);
+            return response()->json([
+                'barang_terima' => session('barang_terima')
+            ]);
+        }else{
+            //cek apakah barang sudah ditambahkan
         if($in_cart){
             if($in_cart->sisa_vol_terima == 0){
                 return back()->with('warning', 'Tidak dapat menambahkan barang, sisa vol terima adalah 0');
@@ -86,7 +94,7 @@ class PenerimaanCartController extends Controller
                         $in_cart->update();
                     }
 
-                     //update perencanaan detail di sisa terima 
+                    //update perencanaan detail di sisa terima 
                     $perencanaan_detail->sisa_terima = $sisa_terima;
                     $perencanaan_detail->biaya_realisasi = $in_cart->harga_terima;
                     $perencanaan_detail->subtotal = $in_cart->subtotal_terima;
@@ -101,48 +109,43 @@ class PenerimaanCartController extends Controller
     
                     $in_cart->subtotal_terima =  $in_cart->jumlah_terima * $in_cart->harga_terima;
                     $in_cart->update();
-    
-                    return back()->with('success', "Berhasil menambahkan barang");
-                }
 
+                    return back()->with('success', "Berhasil menambahkan barang");
+    
+                }
             }
         }else{
-            if($request->id_kategori == 5){
-                session(['barang_terima' => $request->all()]);
-                return response()->json([
-                    'barang_terima' => session('barang_terima')
-                ]);
+            $detail = new Penerimaan_cart();
+            $detail->id_user = Auth::id();
+            $detail->id_penerimaan = session('id_penerimaan');
+            $detail->id_perencanaan = $request->id_perencanaan;
+            $detail->id_perencanaan_detail = $request->id_perencanaan_detail;
+            $detail->id_barang = $request->id_barang;
+            $detail->jumlah_terima = $request->jumlah_terima;
+            $detail->sisa_vol_terima = $sisa_terima;
+            $detail->harga_terima = $request->harga_terima;
+            $detail->subtotal_terima = $request->harga_terima * $request->jumlah_terima;
+            if($perencanaan_detail->sisa_terima - $request->jumlah_terima == 0){
+                $detail->status_penerimaan = 'Sudah Diterima'; 
             }else{
-                $detail = new Penerimaan_cart();
-                $detail->id_user = Auth::id();
-                $detail->id_penerimaan = session('id_penerimaan');
-                $detail->id_perencanaan = $request->id_perencanaan;
-                $detail->id_perencanaan_detail = $request->id_perencanaan_detail;
-                $detail->id_barang = $request->id_barang;
-                $detail->jumlah_terima = $request->jumlah_terima;
-                $detail->sisa_vol_terima = $sisa_terima;
-                $detail->harga_terima = $request->harga_terima;
-                $detail->subtotal_terima = $request->harga_terima * $request->jumlah_terima;
-                if($perencanaan_detail->sisa_terima - $request->jumlah_terima == 0){
-                    $detail->status_penerimaan = 'Sudah Diterima'; 
-                }else{
-                    $detail->status_penerimaan = 'Diterima sebagian'; 
-                }
-                $detail->penerima = session('penerimaan.penerima');
-                $detail->save();
+                $detail->status_penerimaan = 'Diterima sebagian'; 
+            }
+            $detail->penerima = session('penerimaan.penerima');
+            $detail->save();
 
-                //update perencanaan detail di sisa terima 
-                $perencanaan_detail->sisa_terima = $sisa_terima;
-                $perencanaan_detail->biaya_realisasi = $detail->harga_terima;
-                $perencanaan_detail->subtotal = $detail->subtotal_terima;
-                if($sisa_terima == 0){
-                    $perencanaan_detail->status = "Terealisasi";
-                    $perencanaan_detail->update();
-                }elseif ($sisa_terima < 0 ){
-                    return back()->with('warning', 'jumlah yang anda masukkan lebih dari sisa yang dapat diterima');
-                }else{
-                    $perencanaan_detail->update();
-                }
+            //update perencanaan detail di sisa terima 
+            $perencanaan_detail->sisa_terima = $sisa_terima;
+            $perencanaan_detail->biaya_realisasi = $detail->harga_terima;
+            $perencanaan_detail->subtotal = $detail->subtotal_terima;
+            if($sisa_terima == 0){
+                $perencanaan_detail->status = "Terealisasi";
+                $perencanaan_detail->update();
+            }elseif ($sisa_terima < 0 ){
+                return back()->with('warning', 'jumlah yang anda masukkan lebih dari sisa yang dapat diterima');
+            }else{
+                $perencanaan_detail->update();
+            }
+            
 
 
                 //update table rencana di biaya realisasi
@@ -211,15 +214,102 @@ class PenerimaanCartController extends Controller
         $pr_detail->sisa_terima += $detail->jumlah_terima;
         $pr_detail->update();
         
-        $detail->delete();
-
-        // $detail->user_delete = Auth::user()->id;
-        // $detail->update();
-
-        // $barang = Barang::where('id_barang', $detail->id_barang)->first();
-        // $barang->stok -= $detail->jumlah_terima; 
-        // $barang->update();  
+        $detail->delete(); 
         
         return response(null, 204);
+    }
+
+    public function banStore(Request $request){
+        $items = [$request->all('ban')];
+        foreach ($items[0]['ban'] as $value) {
+            $ban = Ban::orderBy('kode_ban', 'DESC')->latest()->first() ?? new Ban();
+            $kode_ban1 = substr($ban->kode_ban,4);
+            $kode_ban = (int) $kode_ban1 +1;
+
+            $request['kode_ban'] = 'BAN-'. tambah_nol_didepan($kode_ban, 6);
+
+            $ban = Ban::create([
+                'id_barang' => session("barang_terima.id_barang"),
+                'nomor_seri' => $value["'nomor_seri'"],
+                'kode_ban' => $request['kode_ban'],
+                'tgl_beli' => $value["'tanggal_beli'"]
+            ]);
+        }
+
+        //ambil data di table cart
+        $in_cart = Penerimaan_cart::with('barang')
+                    ->whereBelongsTo($request->user())
+                    ->where('id_barang', session('barang_terima.id_barang'))
+                    ->first();
+        $perencanaan_detail = PerencanaanDetail::where('id_perencanaan_detail', session("barang_terima.id_perencanaan_detail"))->first();
+        $sisa_terima = $perencanaan_detail->sisa_terima - session('barang_terima.jumlah_terima');
+
+
+
+        if($in_cart){
+            $in_cart->jumlah_terima = $in_cart->jumlah_terima + session('barang_terima.jumlah_terima');
+            $in_cart->update();
+
+            $in_cart->sisa_vol_terima = $perencanaan_detail->jumlah - $in_cart->jumlah_terima;
+            $in_cart->update();
+
+            if($in_cart->sisa_vol_terima == 0){
+                $in_cart->status_penerimaan = 'Sudah Diterima'; 
+                $in_cart->update();
+            }else{
+                $in_cart->status_penerimaan = 'Diterima sebagian'; 
+                $in_cart->update();
+            }
+
+            //update perencanaan detail di sisa terima 
+            $perencanaan_detail->sisa_terima = $sisa_terima;
+            $perencanaan_detail->biaya_realisasi = $in_cart->harga_terima;
+            $perencanaan_detail->subtotal = $in_cart->subtotal_terima;
+            if($sisa_terima == 0){
+                $perencanaan_detail->status = "Terealisasi";
+                $perencanaan_detail->update();
+            }elseif ($sisa_terima < 0 ){
+                return back()->with('warning', 'jumlah yang anda masukkan lebih dari sisa yang dapat diterima');
+            }else{
+                $perencanaan_detail->update();
+            }
+
+            $in_cart->subtotal_terima =  $in_cart->jumlah_terima * $in_cart->harga_terima;
+            $in_cart->update();
+        }else{
+            //input list barang yang diterima 
+            $detail = new Penerimaan_cart();
+            $detail->id_user = Auth::user()->id;
+            $detail->id_penerimaan = session('barang_terima.id_penerimaan');
+            $detail->id_perencanaan = session('barang_terima.id_perencanaan');
+            $detail->id_perencanaan_detail = session('barang_terima.id_perencanaan_detail');
+            $detail->id_barang = session('barang_terima.id_barang');
+            $detail->jumlah_terima = session('barang_terima.jumlah_terima');
+            $detail->sisa_vol_terima = $sisa_terima;
+            $detail->harga_terima = session('barang_terima.harga_terima');
+            $detail->subtotal_terima = session('barang_terima.harga_terima') * session('barang_terima.jumlah_terima');;
+            if($perencanaan_detail->sisa_terima - session('barang_terima.jumlah_terima') == 0){
+                $detail->status_penerimaan = 'Sudah Diterima'; 
+            }else{
+                $detail->status_penerimaan = 'Diterima sebagian'; 
+            }
+            $detail->penerima = Auth::user()->id;
+            $detail->save();
+    
+            //input list barang yang diterima 
+            $perencanaan_detail = PerencanaanDetail::where('id_perencanaan_detail', session("barang_terima.id_perencanaan_detail"))->first();
+            $sisa_terima = $perencanaan_detail->sisa_terima - session('barang_terima.jumlah_terima');
+    
+            $perencanaan_detail->sisa_terima = $sisa_terima;
+            $perencanaan_detail->biaya_realisasi = $detail->harga_terima;
+            $perencanaan_detail->subtotal = $detail->subtotal_terima;
+            if($sisa_terima == 0){
+                $perencanaan_detail->status = "Terealisasi";
+            }
+            $perencanaan_detail->update();
+    
+        }
+        return redirect()->route('penerimaan_detail.index');
+        
     }
 }

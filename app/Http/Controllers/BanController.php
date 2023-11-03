@@ -50,22 +50,6 @@ class BanController extends Controller
 
     public function store(Request $request)
     {
-        $items = [$request->all('ban')];
-        foreach ($items[0]['ban'] as $value) {
-            $ban = Ban::orderBy('kode_ban', 'DESC')->latest()->first() ?? new Ban();
-            $kode_ban1 = substr($ban->kode_ban,4);
-            $kode_ban = (int) $kode_ban1 +1;
-
-            $request['kode_ban'] = 'BAN-'. tambah_nol_didepan($kode_ban, 6);
-
-            $ban = Ban::create([
-                'id_barang' => session('id_barang'),
-                'nomor_seri' => $value["'nomor_seri'"],
-                'kode_ban' => $request['kode_ban'],
-                'tgl_beli' => $value["'tanggal_beli'"]
-            ]);
-        }
-
         $produk = Barang::create([
             'kode_barang' => session("produk.kode_barang"),
             'nama_barang' => session("produk.nama_barang"),
@@ -76,6 +60,23 @@ class BanController extends Controller
             'stok' => session("produk.stok"),
 
         ]);
+
+
+        $items = [$request->all('ban')];
+        foreach ($items[0]['ban'] as $value) {
+            $ban = Ban::orderBy('kode_ban', 'DESC')->latest()->first() ?? new Ban();
+            $kode_ban1 = substr($ban->kode_ban,4);
+            $kode_ban = (int) $kode_ban1 +1;
+
+            $request['kode_ban'] = 'BAN-'. tambah_nol_didepan($kode_ban, 6);
+
+            $ban = Ban::create([
+                'id_barang' => $produk->id_barang,
+                'nomor_seri' => $value["'nomor_seri'"],
+                'kode_ban' => $request['kode_ban'],
+                'tgl_beli' => $value["'tanggal_beli'"]
+            ]);
+        }
 
         $request->session()->forget(['produk', 'id_barang']);
         return redirect()->route('barang.index');
@@ -141,6 +142,23 @@ class BanController extends Controller
         })
         ->rawColumns(['permintaan', 'kode_ban'])
         ->make(true);
+    }
+
+    public function insertBan(Request $request){
+        $ban = Ban::orderBy('kode_ban', 'DESC')->latest()->first() ?? new Ban();
+        $kode_ban1 = substr($ban->kode_ban,4);
+        $kode_ban = (int) $kode_ban1 +1;
+
+        $request['kode_ban'] = 'BAN-'. tambah_nol_didepan($kode_ban, 6);
+
+        $ban = Ban::create([
+            'id_barang' => session('id_barang'),
+            'nomor_seri' => $request->edit_nomor_seri,
+            'kode_ban' => $request['kode_ban'],
+            'tgl_beli' => $request->tanggal_beli
+        ]);
+
+        return response()->json('data berhasil ditambahkan', 200);
     }
 
 

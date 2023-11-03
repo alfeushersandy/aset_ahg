@@ -16,7 +16,7 @@
             <button  class="btn btn-primary btn-flat" type="button" onclick="kembali()">Kembali</button>
         <div class="box">
             <div class="box-body table-responsive">
-                    <table class="table table-stiped table-bordered">
+                    <table class="table table-stiped table-bordered table-detail">
                         <thead>
                             <th width="5%">No</th>
                             <th>Kode Barang</th>
@@ -54,7 +54,7 @@
     <script>
         let table;
         $(function(){
-            table = $('.table').DataTable();
+            table = $('.table-detail').DataTable();
         })
 
         function kembali()

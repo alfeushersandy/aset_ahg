@@ -39,7 +39,6 @@
                         <th>Jumlah Terima</th>
                         <th>Status Penerimaan</th>
                         <th>Kode Aset</th>
-                        <th><i class="fa fa-cog"></i></th>
                     </thead>
                     <tbody>
                         @foreach ($penerimaan as $item)
@@ -56,7 +55,6 @@
                                 <td>{{'Rp. '. format_uang($item->subtotal_terima)}}</td>
                                 <td>{{$item->status_penerimaan}}</td>
                                 <td>{{$item->kode_kabin}}</td>
-                                <td>aksi</td>
                             </tr>
                         @endforeach
                     </tbody>

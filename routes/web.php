@@ -142,7 +142,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/penerimaandetail/{id}/data', [PenerimaanDetailController::class, 'data'])->name('penerimaan_detail.data');
         // Route::delete('/penerimaandetail/{id}/delete', [PenerimaanDetailController::class, 'data_destroy'])->name('penerimaan_detail.data_destroy');
         Route::post('/penerimaandetail/update', [PenerimaanDetailController::class, 'update'])->name('penerimaan_detail.update');
-        Route::post('/penerimaandetail/ban', [PenerimaanDetailController::class, 'banStore'])->name('penerimaan_detail.ban');
+        // Route::post('/penerimaandetail/ban', [PenerimaanDetailController::class, 'banStore'])->name('penerimaan_detail.ban');
+        Route::post('/penerimaandetail/ban', [PenerimaanCartController::class, 'banStore'])->name('penerimaan_detail.ban');
 
         Route::get('/mobilisasi/data', [MobilisasiController::class, 'data'])->name('mobilisasi.data');
         Route::post('/mobilisasi/create', [MobilisasiController::class, 'create'])->name('mobilisasi.create');
@@ -236,11 +237,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/barang/cetak-barcode', [BarangController::class, 'cetakBarcode'])->name('barang.cetak_barcode');
         Route::get('/barang/data/{kelompok}', [BarangController::class, 'byKelompok'])->name('barang.kelompok');
         Route::get('/barang/detail/{id_barang}', [BarangController::class, 'detail'])->name('barang.detail');
+        Route::get('/barang/count/{id_barang}', [BarangController::class, 'countBan'])->name('barang.countBan');
+        Route::get('/barang/getsession', [BarangController::class, 'getSession'])->name('barang.getSession');
+        Route::get('/barang/updateban', [BarangController::class, 'updateBan'])->name('barang.updateBan');
         Route::resource('/barang', BarangController::class);
 
         Route::get('/ban/data', [BanController::class, 'data'])->name('ban.data');
         Route::get('/ban/pakai', [BanController::class, 'dataPakai'])->name('ban.dataPakai');
         Route::get('/ban/list-pakai', [BanController::class, 'banPakai'])->name('ban.banPakai');
+        Route::post('/ban/insert', [BanController::class, 'insertBan'])->name('ban.insertBan');
         Route::resource('/ban', BanController::class);
 
 
