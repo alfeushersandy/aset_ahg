@@ -126,7 +126,7 @@
                     <br>
                     <br>
                     <br>
-                Kukuh Sumaryadi
+                Agung Sedayu
                 </td>
             </tr>
     </table>
