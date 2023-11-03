@@ -44,7 +44,7 @@
                             <tr data-id="{{$item->id_perencanaan_detail}}">
                                 <td>{{$loop->iteration}}</td>
                                 <td>{{$item->perencanaan->kode_rencana}}</td>
-                                <td>{{date('d-m-Y', strtotime($item->perencanaan->tanggal_rencana))}}</td>
+                                <td>{{$item->perencanaan->tanggal_rencana}}</td>
                                 <td>{{$item->barang->kode_barang}}</td>
                                 <td>{{$item->barang->nama_barang}}</td>
                                 <td>{{$item->jumlah}}</td>
