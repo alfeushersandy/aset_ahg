@@ -1,16 +1,16 @@
 <div class="modal fade" id="modal-form-ban" tabindex="-1" role="dialog" aria-labelledby="modal-form">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <form action="{{route('penerimaan_detail.ban')}}" method="post" class="form-horizontal">
             @csrf
             @method('post')
 
-            <div class="modal-content">
+            <div class="modal-content" >
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title"></h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="overflow-y: scroll; height:500px;">
                          
                 </div>
                 <div class="modal-footer">
