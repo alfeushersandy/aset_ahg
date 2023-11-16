@@ -14,7 +14,7 @@ class Penerimaan_cart extends Model
 
     public function barang()
     {
-        return $this->belongsTo(barang::class, 'id_barang', 'id_barang');
+        return $this->hasMany(Barang::class, 'id_barang', 'id_barang');
     }
 
     public function user()

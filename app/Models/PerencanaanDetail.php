@@ -16,11 +16,11 @@ class PerencanaanDetail extends Model
 
     public function barang()
     {
-        return $this->hasOne(Barang::class, 'id_barang', 'id_barang');
+        return $this->belongsTo(Barang::class, 'id_barang', 'id_barang');
     }
 
     public function perencanaan()
     {
-        return $this->hasOne(Perencanaan::class, 'id_perencanaan', 'id_perencanaan');
+        return $this->belongsTo(Perencanaan::class, 'id_perencanaan', 'id_perencanaan');
     }
 }
