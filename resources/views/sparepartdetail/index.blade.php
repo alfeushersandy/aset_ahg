@@ -212,7 +212,7 @@
     })
 
     $('#tombol_save').on('click', function(){
-        let checkbox = $('[name="id_detail_barang[]"]:checked');
+        let checkbox = table3.$('[name="id_detail_barang[]"]:checked');
         let quantity = $('#quantity').val();
 
         if(checkbox.length > quantity || checkbox.length < quantity){

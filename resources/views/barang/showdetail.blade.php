@@ -9,9 +9,7 @@
                 <div class="modal-body">
                     <table class="table table-stiped table-bordered table-detail">
                         <thead>
-                            <th>Kode Barang</th>
-                            <th>Nama Barang</th>
-                            <th>Nomor Seri Produk</th>
+                            <th>Nomor Seri Ban</th>
                             <th>Kode Ban</th>
                             <th>Tanggal Beli</th>
                             <th>Tanggal Pakai</th>

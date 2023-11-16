@@ -146,13 +146,13 @@ class PermintaandetailController extends Controller
             $permintaan = Permintaan::where('id', session('sparepart.id_permintaan'))->first();
             $ban = Ban::find($id);
 
-            $detail = new Detail_pakai();
-            $detail->id_permintaan = session('sparepart.id_permintaan');
-            $detail->tgl_pakai = $permintaan->tanggal;
-            $detail->id_detail_barang = $ban->id_detail_barang;
-            $detail->harga = session('sparepart.harga');
-            $detail->id_aset = $permintaan->member->id;
-            $detail->save();
+            $detail_pakai = new Detail_pakai();
+            $detail_pakai->id_permintaan = session('sparepart.id_permintaan');
+            $detail_pakai->tgl_pakai = session('sparepart.tanggal_pakai');
+            $detail_pakai->id_detail_barang = $ban->id_detail_barang;
+            $detail_pakai->harga = session('sparepart.harga');
+            $detail_pakai->id_aset = $permintaan->member->id;
+            $detail_pakai->save();
 
             $ban->tgl_pakai = date('Y-m-d');
             $ban->id_aset = $permintaan->member->id;

@@ -120,7 +120,6 @@
             if (! e.preventDefault()) {
                     $.post($('#modal-form form').attr('action'), $('#modal-form form').serialize())
                         .done((response) => {
-                            console.log(response)
                             if($('#modal-form [name=_method]').val() == 'post'){
                                 if($('#modal-form [name=id_kategori]').val() == 5){
                                     $('#modal-form-ban').modal('show');
@@ -194,18 +193,18 @@
 
     table1 = $('.table-detail').DataTable({
             order : [1, 'DESC'],
-            searching: true,
+            responsive: true,
             processing: true,
+            serverSide: false,
+            autoWidth: false,
+            data: [],
             columns: [
-                {data: 'kode_barang'},
-                {data: 'nama_barang'},
                 {data: 'nomor_seri'},
                 {data: 'kode_ban'},
                 {data: 'tgl_beli'},
                 {data: 'tgl_pakai'},
                 {data: 'id_aset'},
-                {data: 'aksi'},
-            ]
+            ],
         })
 
     function addForm(url) {
