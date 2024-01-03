@@ -1,5 +1,5 @@
-<div class="modal fade" id="modal-ban" tabindex="-1" role="dialog" aria-labelledby="modal-produk">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="modal-ban" tabindex="-1" role="dialog" aria-labelledby="modal-produk" style="overflow: scroll">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="quantity">
-                <form action="{{route('permintaandetail.simpanBan')}}" method="post" class="form-ban">
+                <form action="" method="post" class="form-ban">
                 @csrf
                 <table class="table table-striped table-bordered table-ban">
                     <thead>

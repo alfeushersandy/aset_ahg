@@ -212,13 +212,34 @@
     })
 
     $('#tombol_save').on('click', function(){
-        let checkbox = table3.$('[name="id_detail_barang[]"]:checked');
+        const checkedValues = [];
+        let checkbox = table3.$('.id_detail_barang:checked');
         let quantity = $('#quantity').val();
+        $(checkbox).each(function() {
+            checkedValues.push($(this).val()); // Push checked values into the array
+        });
 
+        console.log(checkedValues);
         if(checkbox.length > quantity || checkbox.length < quantity){
             alert(`check sesuai dengan yang anda inputkan !! jumlah yang anda inputkan adalah : ${quantity}`)
         }else{
-            $('.form-ban').submit();
+            $.ajax({
+            method: 'POST',
+            url: "{{route('permintaandetail.simpanBan')}}",
+            data: {
+                checkedValues: checkedValues,
+                _token: $("meta[name='csrf-token']").attr("content")
+            },
+            success: function(response) {
+                // Handle success response if needed
+                $('#modal-ban').modal('hide');
+                table.ajax.reload();
+            },
+            error: function(xhr, status, error) {
+                // Handle error if needed
+                alert.error(error);
+            }
+        });
         }
         
     })

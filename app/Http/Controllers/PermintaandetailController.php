@@ -133,7 +133,7 @@ class PermintaandetailController extends Controller
             ->addIndexColumn()
             ->addColumn('select_all', function ($ban) {
                 return '
-                    <input type="checkbox" name="id_detail_barang[]" value="'. $ban->id_detail_barang .'">
+                    <input type="checkbox" name="id_detail_barang[]" class="id_detail_barang" value="'. $ban->id_detail_barang .'">
                 ';
             })
             ->rawColumns(['select_all'])
@@ -142,7 +142,7 @@ class PermintaandetailController extends Controller
 
     public function simpanBan(Request $request)
     {
-        foreach ($request->id_detail_barang as $id) {
+        foreach ($request->checkedValues as $id) {
             $permintaan = Permintaan::where('id', session('sparepart.id_permintaan'))->first();
             $ban = Ban::find($id);
 
@@ -171,7 +171,7 @@ class PermintaandetailController extends Controller
             $request->session()->forget(['sparepart']);
     
 
-        return redirect()->route('permintaandetail.index', session('id_permintaan'));
+        return response()->json('data berhasil ditambahkan', 200);
     }
 
 }
