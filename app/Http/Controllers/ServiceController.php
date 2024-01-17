@@ -119,6 +119,7 @@ class ServiceController extends Controller
         
         $data = array();
         $no = 1;
+        $total = 0;
         $permintaan = Permintaandetail::leftjoin('permintaan', 'permintaan.id', 'permintaan_detail.id_permintaan')
                         ->join('barang', 'barang.id_barang', 'permintaan_detail.id_barang')
                          ->where('permintaan.kode_customer', $id)

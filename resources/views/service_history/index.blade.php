@@ -120,6 +120,8 @@
             table.ajax.reload();
         }
         });
+    
+    $('#kode_kendaraan').select2();
 
     function showDetail(url) {
         $('#modal-detail').modal('show');
