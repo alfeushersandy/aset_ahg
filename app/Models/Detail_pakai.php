@@ -13,7 +13,7 @@ class Detail_pakai extends Model
 
     public function permintaan()
     {
-        return $this->hasMany(Permintaan::class, 'id', 'id_permintaan');
+        return $this->hasOne(Permintaan::class, 'id', 'id_permintaan');
     }
 
     public function ban()
@@ -23,6 +23,6 @@ class Detail_pakai extends Model
 
     public function member()
     {
-        return $this->hasMany(Member::class, 'id', 'id_aset');
+        return $this->hasOne(Member::class, 'id', 'id_aset');
     }
 }

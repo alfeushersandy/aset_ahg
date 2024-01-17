@@ -100,6 +100,11 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('laporan-ban.index') }}">
+                    <i class="fa fa-file-pdf-o"></i> <span>Laporan Ban</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('mobilisasi.report') }}">
                     <i class="fa fa-file-pdf-o"></i> <span>Laporan Mobilisasi</span>
                 </a>

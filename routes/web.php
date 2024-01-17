@@ -29,6 +29,7 @@ use App\Http\Controllers\{
     PerencanaanController,
     PerencanaanDetailController,
     PermintaanBarangController,
+    LaporanBanController,
 };
 use App\Models\Perencanaan;
 use Illuminate\Support\Facades\Artisan;
@@ -248,6 +249,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/ban/insert', [BanController::class, 'insertBan'])->name('ban.insertBan');
         Route::resource('/ban', BanController::class);
 
+        Route::get('/laporan-ban/getData/{id}', [LaporanBanController::class, 'getData'])->name('laporanban.getData');
+        Route::get('/laporan-ban/history/{id}/{tgl_awal}/{tgl_akhir}', [LaporanBanController::class, 'getPakaiBan'])->name('laporanban.getPakaiBan');
+        Route::get('/laporan-ban/history', [LaporanBanController::class, 'historyBan'])->name('laporanban.historyBan');
+        Route::resource('/laporan-ban', LaporanBanController::class);
 
         Route::get('/permintaan/{id}/sparepart', [PermintaanController::class, 'sparepart'])->name('permintaan.sparepart');
         Route::get('/permintaan/selesai/{id}', [PermintaanController::class, 'selesai'])->name('permintaan.selesai');
